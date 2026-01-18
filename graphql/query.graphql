@@ -1,0 +1,709 @@
+fragment category on Category {
+  id
+  name
+  createdAt
+  updatedAt
+}
+
+fragment post on Post {
+  id
+  published
+  title
+  content
+  authorId
+  createdAt
+  updatedAt
+  publishedAt
+}
+
+fragment user on User {
+  id
+  email
+  name
+  roles
+  createdAt
+  updatedAt
+}
+
+query Me(
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  me {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+query FindManyCategory(
+  $offset: Int,
+  $limit: Int,
+  $where: CategoryWhere,
+  $orderBy: [CategoryOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  findManyCategory(
+    offset: $offset,
+    limit: $limit,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+query FindFirstCategory(
+  $offset: Int,
+  $where: CategoryWhere,
+  $orderBy: [CategoryOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  findFirstCategory(
+    offset: $offset,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+query CountCategory(
+  $limit: Int,
+  $where: CategoryWhere
+) {
+  countCategory(
+    limit: $limit,
+    where: $where
+  )
+}
+
+query FindManyPost(
+  $offset: Int,
+  $limit: Int,
+  $where: PostWhere,
+  $orderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  findManyPost(
+    offset: $offset,
+    limit: $limit,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+query FindFirstPost(
+  $offset: Int,
+  $where: PostWhere,
+  $orderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  findFirstPost(
+    offset: $offset,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+query CountPost(
+  $limit: Int,
+  $where: PostWhere
+) {
+  countPost(
+    limit: $limit,
+    where: $where
+  )
+}
+
+query FindManyUser(
+  $offset: Int,
+  $limit: Int,
+  $where: UserWhere,
+  $orderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  findManyUser(
+    offset: $offset,
+    limit: $limit,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+query FindFirstUser(
+  $offset: Int,
+  $where: UserWhere,
+  $orderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  findFirstUser(
+    offset: $offset,
+    where: $where,
+    orderBy: $orderBy
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+query CountUser(
+  $limit: Int,
+  $where: UserWhere
+) {
+  countUser(
+    limit: $limit,
+    where: $where
+  )
+}
+
+mutation SignIn(
+  $email: String,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  signIn(
+    email: $email
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation SignOut {
+  signOut
+}
+
+mutation CreateOneCategory(
+  $input: CategoryCreate!,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  createOneCategory(
+    input: $input
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation CreateManyCategory(
+  $input: [CategoryCreate!]!,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  createManyCategory(
+    input: $input
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation UpdateCategory(
+  $input: CategoryUpdate!,
+  $where: CategoryWhere,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  updateCategory(
+    input: $input,
+    where: $where
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation DeleteCategory(
+  $where: CategoryWhere,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  deleteCategory(
+    where: $where
+  ) {
+    ...category
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation CreateOnePost(
+  $input: PostCreate!,
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  createOnePost(
+    input: $input
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+mutation CreateManyPost(
+  $input: [PostCreate!]!,
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  createManyPost(
+    input: $input
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+mutation UpdatePost(
+  $input: PostUpdate!,
+  $where: PostWhere,
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  updatePost(
+    input: $input,
+    where: $where
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+mutation DeletePost(
+  $where: PostWhere,
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
+) {
+  deletePost(
+    where: $where
+  ) {
+    ...post
+    authorCount(
+      where: $authorCountWhere
+    )
+    categoriesCount(
+      where: $categoriesCountWhere
+    )
+    author(
+      offset: $authorOffset,
+      limit: $authorLimit,
+      where: $authorWhere,
+      orderBy: $authorOrderBy
+    ) {
+      ...user
+    }
+    categories(
+      offset: $categoriesOffset,
+      limit: $categoriesLimit,
+      where: $categoriesWhere,
+      orderBy: $categoriesOrderBy
+    ) {
+      ...category
+    }
+  }
+}
+
+mutation CreateOneUser(
+  $input: UserCreate!,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  createOneUser(
+    input: $input
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation CreateManyUser(
+  $input: [UserCreate!]!,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  createManyUser(
+    input: $input
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation UpdateUser(
+  $input: UserUpdate!,
+  $where: UserWhere,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  updateUser(
+    input: $input,
+    where: $where
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
+
+mutation DeleteUser(
+  $where: UserWhere,
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!]
+) {
+  deleteUser(
+    where: $where
+  ) {
+    ...user
+    postsCount(
+      where: $postsCountWhere
+    )
+    posts(
+      offset: $postsOffset,
+      limit: $postsLimit,
+      where: $postsWhere,
+      orderBy: $postsOrderBy
+    ) {
+      ...post
+    }
+  }
+}
