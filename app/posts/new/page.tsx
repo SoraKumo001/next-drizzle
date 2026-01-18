@@ -57,59 +57,67 @@ export default function NewPost() {
 
   return (
     <div className="p-4">
-      <Link href="/" className="text-blue-500 hover:underline mb-4 block">
+      <Link href="/" className="btn btn-ghost btn-sm mb-4">
         &larr; Back to Home
       </Link>
       <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
-      <form onSubmit={handleSubmit} className="grid gap-4 max-w-lg">
+      <form onSubmit={handleSubmit} className="grid gap-4 max-w-lg form-control">
         <div>
-          <label className="block mb-2 font-bold">Title</label>
+          <label className="label font-bold">
+            <span className="label-text">Title</span>
+          </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="input input-bordered w-full"
             required
           />
         </div>
         <div>
-          <label className="block mb-2 font-bold">Content</label>
+          <label className="label font-bold">
+            <span className="label-text">Content</span>
+          </label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="border p-2 rounded w-full h-32"
+            className="textarea textarea-bordered w-full h-32"
             required
           />
         </div>
-        <div>
-          <label className="flex items-center gap-2 font-bold">
+        <div className="form-control w-24">
+          <label className="label cursor-pointer font-bold">
+            <span className="label-text">Published</span>
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
+              className="checkbox"
             />
-            Published
           </label>
         </div>
         <div>
-          <label className="block mb-2 font-bold">Categories</label>
+          <label className="label font-bold">
+            <span className="label-text">Categories</span>
+          </label>
           <div className="flex flex-wrap gap-4">
             {categoriesData?.findManyCategory?.map((category) => (
-              <label key={category.id} className="flex items-center gap-2">
+              <label key={category.id} className="label cursor-pointer gap-2">
                 <input
                   type="checkbox"
                   value={category.id}
                   checked={selectedCategories.includes(category.id)}
                   onChange={() => handleCategoryChange(category.id)}
+                  className="checkbox checkbox-sm"
                 />
-                {category.name}
+                <span className="label-text">{category.name}</span>
               </label>
             ))}
           </div>
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="btn btn-primary"
         >
           Create Post
         </button>

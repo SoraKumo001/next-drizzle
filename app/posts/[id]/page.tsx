@@ -95,7 +95,7 @@ function PostForm({
 
   return (
     <div className="p-4">
-      <Link href="/" className="text-blue-500 hover:underline mb-4 block">
+      <Link href="/" className="btn btn-ghost btn-sm mb-4">
         &larr; Back to Home
       </Link>
       <div className="flex justify-between items-center mb-4 max-w-lg">
@@ -103,70 +103,78 @@ function PostForm({
         <button
           type="button"
           onClick={handleDelete}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="btn btn-error btn-sm text-white"
         >
           Delete Post
         </button>
       </div>
       {updateError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          Error: {updateError.message}
+        <div role="alert" className="alert alert-error mb-4">
+          <span>Error: {updateError.message}</span>
         </div>
       )}
       {deleteError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          Delete Error: {deleteError}
+        <div role="alert" className="alert alert-error mb-4">
+          <span>Delete Error: {deleteError}</span>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="grid gap-4 max-w-lg">
+      <form onSubmit={handleSubmit} className="grid gap-4 max-w-lg form-control">
         <div>
-          <label className="block mb-2 font-bold">Title</label>
+          <label className="label font-bold">
+            <span className="label-text">Title</span>
+          </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="input input-bordered w-full"
             required
           />
         </div>
         <div>
-          <label className="block mb-2 font-bold">Content</label>
+          <label className="label font-bold">
+            <span className="label-text">Content</span>
+          </label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="border p-2 rounded w-full h-32"
+            className="textarea textarea-bordered w-full h-32"
             required
           />
         </div>
-        <div>
-          <label className="flex items-center gap-2 font-bold">
+        <div className="form-control w-24">
+          <label className="label cursor-pointer font-bold">
+            <span className="label-text">Published</span>
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
+              className="checkbox"
             />
-            Published
           </label>
         </div>
         <div>
-          <label className="block mb-2 font-bold">Categories</label>
+          <label className="label font-bold">
+            <span className="label-text">Categories</span>
+          </label>
           <div className="flex flex-wrap gap-4">
             {categoriesData?.findManyCategory?.map((category) => (
-              <label key={category.id} className="flex items-center gap-2">
+              <label key={category.id} className="label cursor-pointer gap-2">
                 <input
                   type="checkbox"
                   value={category.id}
                   checked={selectedCategories.includes(category.id)}
                   onChange={() => handleCategoryChange(category.id)}
+                  className="checkbox checkbox-sm"
                 />
-                {category.name}
+                <span className="label-text">{category.name}</span>
               </label>
             ))}
           </div>
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="btn btn-primary"
         >
           Update Post
         </button>
