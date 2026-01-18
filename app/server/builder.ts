@@ -1,6 +1,5 @@
 import SchemaBuilder from "@pothos/core";
 import DrizzlePlugin from "@pothos/plugin-drizzle";
-import { drizzle } from "drizzle-orm/node-postgres";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { GraphQLSchema } from "graphql";
 import { setCookie } from "hono/cookie";
@@ -8,25 +7,11 @@ import { SignJWT } from "jose";
 import PothosDrizzleGeneratorPlugin, {
   isOperation,
 } from "pothos-drizzle-generator";
-import { format } from "sql-formatter";
 import { relations } from "../db/relations";
 import type { Context } from "./context";
 import type { Context as HonoContext } from "hono";
-
-/**
- * Helper function to retrieve and validate environment variables.
- * Throws an error if the specified variable is not set.
- */
-const getEnvVariable = (name: string): string => {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is not set`);
-  }
-  return value;
-};
-
-// Database connection string from environment variables
-const connectionString = getEnvVariable("DATABASE_URL");
+import { getEnvVariable } from "../libs/getEnvVariable";
+import { db } from "./drizzle";
 
 // Secret key for JWT token signing and verification
 const SECRET = getEnvVariable("SECRET");
@@ -44,37 +29,6 @@ const COOKIE_OPTIONS = {
 // Tables to exclude from GraphQL schema generation
 // Junction tables like "postsToCategories" are typically excluded
 const EXCLUDE_TABLES: Array<keyof typeof relations> = ["postsToCategories"];
-
-// Extract schema name from connection string (defaults to "public")
-const url = new URL(connectionString);
-const searchPath = url.searchParams.get("schema") ?? "public";
-
-// Initialize Drizzle ORM client with PostgreSQL connection
-// Includes custom query logger for debugging SQL statements
-const db = drizzle({
-  connection: {
-    connectionString,
-    options: `--search_path=${searchPath}`,
-  },
-  relations,
-  // logger: {
-  //   logQuery: (query, params) => {
-  //     const formattedParams = params.map((value, index) => {
-  //       const stringValue =
-  //         typeof value === "string" ? `'${value}'` : String(value);
-  //       return `${stringValue} /*$${index + 1}*/`;
-  //     });
-  //     console.info(
-  //       `--\n${format(query, {
-  //         language: "postgresql",
-  //         keywordCase: "upper",
-  //         expressionWidth: 100,
-  //         params: Object.fromEntries(formattedParams.map((p, i) => [i + 1, p])),
-  //       })};`
-  //     );
-  //   },
-  // },
-});
 
 export interface PothosTypes {
   DrizzleRelations: typeof relations;
