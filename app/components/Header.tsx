@@ -23,7 +23,7 @@ export const Header = () => {
         )}
         {user && (
           <>
-            <div className="badge badge-primary p-3 mr-4">{user?.name}</div>
+            <div className="badge badge-primary p-3 mr-4">{user.name}</div>
             <button
               onClick={() => {
                 signOut();
