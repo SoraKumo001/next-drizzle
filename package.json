@@ -9,10 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "drizzle:reset": "tsx tools/reset && npm run drizzle:migrate && npm run drizzle:seed",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "tsx tools/migrate",
     "drizzle:seed": "tsx tools/seed",
-    "drizzle:reset": "tsx tools/reset",
     "graphql:schema": "tsx ./tools/export-schema.ts",
     "graphql:codegen": "graphql-codegen -c codegen/codegen.ts -w"
   },
@@ -57,7 +57,6 @@
     "tsx": "4.21.0",
     "typescript": "^5.9.3"
   },
-  "main": "index.js",
   "author": "SoraKumo <info@croud.jp>",
   "license": "MIT"
 }
