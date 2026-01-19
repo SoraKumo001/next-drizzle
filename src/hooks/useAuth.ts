@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSignInMutation } from "../generated/graphql";
-import { useDispatch, useSelector } from "@/app/components/StoreProvider";
+import { useDispatch, useSelector } from "../components/StoreProvider";
 
 type StoreUser = {
   user: { id: string; email: string; name: string } | null | undefined;

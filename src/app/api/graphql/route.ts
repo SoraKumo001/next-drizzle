@@ -1,5 +1,5 @@
 "use server";
-import { app } from "../../server/hono";
+import { app } from "../../../server/hono";
 
 export async function POST(request: Request) {
   return app.fetch(request);
