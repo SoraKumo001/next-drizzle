@@ -1,6 +1,6 @@
 "use client";
-import { useFindManyPostQuery, OrderBy } from "../generated/graphql";
-import { useUser } from "../hooks/useAuth";
+import { useFindManyPostQuery, OrderBy } from "@/generated/graphql";
+import { useUser } from "@/hooks/useAuth";
 import Link from "next/link";
 
 export default function Home() {

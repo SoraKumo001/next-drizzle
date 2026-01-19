@@ -3,8 +3,8 @@ import { useState } from "react";
 import {
   useCreateOnePostMutation,
   useFindManyCategoryQuery,
-} from "../../../generated/graphql";
-import { useUser } from "../../../hooks/useAuth";
+} from "@/generated/graphql";
+import { useUser } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

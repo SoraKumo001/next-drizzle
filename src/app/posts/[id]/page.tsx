@@ -7,7 +7,7 @@ import {
   useFindManyCategoryQuery,
   FindFirstPostQuery,
 } from "../../../generated/graphql";
-import { useUser } from "../../../hooks/useAuth";
+import { useUser } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
