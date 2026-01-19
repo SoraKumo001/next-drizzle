@@ -58,5 +58,7 @@
     "typescript": "^5.9.3"
   },
   "author": "SoraKumo <info@croud.jp>",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "index.js",
+  "repository": "https://github.com/SoraKumo001/next-drizzle"
 }
