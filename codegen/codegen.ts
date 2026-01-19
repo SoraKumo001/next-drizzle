@@ -13,7 +13,7 @@ export const defineConfig: CodegenConfig = {
   documents: "graphql/*.graphql",
   overwrite: true,
   generates: {
-    "app/generated/graphql.ts": {
+    "src/generated/graphql.ts": {
       plugins: ["typescript", "typescript-operations", "typescript-urql"],
       config: {
         scalars: scalars(Object.values(resolvers)),

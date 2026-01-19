@@ -1,77 +1,39 @@
 "use client";
-import { useState, use } from "react";
+import { useState } from "react";
 import {
-  useFindFirstPostQuery,
-  useUpdatePostMutation,
-  useDeletePostMutation,
+  useCreateOnePostMutation,
   useFindManyCategoryQuery,
-  FindFirstPostQuery,
-} from "../../generated/graphql";
-import { useUser } from "../../hooks/useAuth";
+} from "../../../generated/graphql";
+import { useUser } from "../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-function PostForm({
-  post,
-  id,
-}: {
-  post: NonNullable<FindFirstPostQuery["findFirstPost"]>;
-  id: string;
-}) {
+export default function NewPost() {
   const user = useUser();
   const router = useRouter();
+  const [, createPost] = useCreateOnePostMutation();
   const [{ data: categoriesData }] = useFindManyCategoryQuery();
-  const [{ error: updateError }, updatePost] = useUpdatePostMutation();
-  const [{}, deletePost] = useDeletePostMutation();
-
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
-  const [published, setPublished] = useState(post.published);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    post.categories ? post.categories.map((c) => c.id) : []
-  );
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [published, setPublished] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    const result = await updatePost({
-      where: { id: { eq: id } },
+    await createPost({
       input: {
         title,
         content,
+        authorId: user.id,
         published,
         categories: {
-          set: selectedCategories.map((catId) => ({ id: catId })),
+          set: selectedCategories.map((id) => ({ id })),
         },
       },
     });
-
-    if (result.error) return;
-
     router.push("/");
-  };
-
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
-
-    const result = await deletePost({
-      where: { id: { eq: id } },
-    });
-
-    if (result.error) {
-      setDeleteError(result.error.message);
-      return;
-    }
-
-    if (result.data?.deletePost && result.data.deletePost.length > 0) {
-      router.push("/");
-    } else {
-      setDeleteError(
-        "Failed to delete post: Post not found or already deleted."
-      );
-    }
   };
 
   const handleCategoryChange = (categoryId: string) => {
@@ -85,7 +47,7 @@ function PostForm({
   if (!user) {
     return (
       <div className="p-4">
-        <div>Please sign in to edit a post.</div>
+        <div>Please sign in to create a post.</div>
         <Link href="/users" className="text-blue-500 hover:underline">
           Go to Users page
         </Link>
@@ -98,27 +60,11 @@ function PostForm({
       <Link href="/" className="btn btn-ghost btn-sm mb-4">
         &larr; Back to Home
       </Link>
-      <div className="flex justify-between items-center mb-4 max-w-lg">
-        <h1 className="text-2xl font-bold">Edit Post</h1>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="btn btn-error btn-sm text-white"
-        >
-          Delete Post
-        </button>
-      </div>
-      {updateError && (
-        <div role="alert" className="alert alert-error mb-4">
-          <span>Error: {updateError.message}</span>
-        </div>
-      )}
-      {deleteError && (
-        <div role="alert" className="alert alert-error mb-4">
-          <span>Delete Error: {deleteError}</span>
-        </div>
-      )}
-      <form onSubmit={handleSubmit} className="grid gap-4 max-w-lg form-control">
+      <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-4 max-w-lg form-control"
+      >
         <div>
           <label className="label font-bold">
             <span className="label-text">Title</span>
@@ -172,30 +118,10 @@ function PostForm({
             ))}
           </div>
         </div>
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
-          Update Post
+        <button type="submit" className="btn btn-primary">
+          Create Post
         </button>
       </form>
     </div>
   );
-}
-
-export default function EditPost({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const [{ data: postData, fetching: fetchingPost }] = useFindFirstPostQuery({
-    variables: { where: { id: { eq: id } } },
-  });
-
-  if (fetchingPost) return <div>Loading...</div>;
-
-  if (!postData?.findFirstPost) return <div>Post not found</div>;
-
-  return <PostForm post={postData.findFirstPost} id={id} />;
 }

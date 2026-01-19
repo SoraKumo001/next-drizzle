@@ -1,6 +1,6 @@
 "use client";
-import { useFindManyUserQuery } from "../generated/graphql";
-import { useSignIn } from "../hooks/useAuth";
+import { useFindManyUserQuery } from "../../generated/graphql";
+import { useSignIn } from "../../hooks/useAuth";
 import Link from "next/link";
 
 export default function Home() {

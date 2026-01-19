@@ -1,6 +1,6 @@
 "use client";
-import { useFindManyPostQuery, OrderBy } from "./generated/graphql";
-import { useUser } from "./hooks/useAuth";
+import { useFindManyPostQuery, OrderBy } from "../generated/graphql";
+import { useUser } from "../hooks/useAuth";
 import Link from "next/link";
 
 export default function Home() {
@@ -27,7 +27,10 @@ export default function Home() {
           <div className="card-body">
             <div className="flex justify-between items-start">
               <h2 className="card-title">{post.title}</h2>
-              <Link href={`/posts/${post.id}`} className="btn btn-outline btn-primary btn-sm">
+              <Link
+                href={`/posts/${post.id}`}
+                className="btn btn-outline btn-primary btn-sm"
+              >
                 Edit
               </Link>
             </div>

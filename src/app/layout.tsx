@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { UrqlProvider } from "./components/UrqlProvider";
-import { StoreProvider } from "./components/StoreProvider";
+import { UrqlProvider } from "../components/UrqlProvider";
+import { StoreProvider } from "../components/StoreProvider";
 import { cookies, headers } from "next/headers";
 import { jwtVerify } from "jose";
-import type { users } from "./db/schema";
-import { encrypt } from "./libs/encrypt";
-import { Header } from "./components/Header";
+import type { users } from "../db/schema";
+import { encrypt } from "../libs/encrypt";
+import { Header } from "../components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
