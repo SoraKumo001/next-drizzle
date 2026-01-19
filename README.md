@@ -27,6 +27,34 @@ Next.js、Drizzle ORM、GraphQL で構築されたモダンな Web アプリケ�
 - **認証:** カスタム JWT 認証
 - **コード生成:** GraphQL Codegen
 
+### アーキテクチャ概要
+
+```mermaid
+graph TD
+    Client[Client Browser]
+
+    subgraph NextJS ["Next.js (App Router)"]
+        Layout["Layout / Pages (RSC)"]
+        Urql[Urql Client]
+        Route["API Route /api/graphql"]
+    end
+
+    subgraph ServerLogic ["Server Logic"]
+        Hono[Hono Server]
+        Pothos[Pothos Schema Builder]
+    end
+
+    DB[("PostgreSQL / Drizzle")]
+
+    Client -->|Interaction| Urql
+    Client -->|Request| Layout
+    Layout -->|SSR Data Fetch| Urql
+    Urql -->|GraphQL Query| Route
+    Route -->|Handle Request| Hono
+    Hono -->|Define Schema| Pothos
+    Hono -->|Query/Mutation| DB
+```
+
 ## はじめに
 
 ### 前提条件
@@ -95,6 +123,36 @@ Next.js、Drizzle ORM、GraphQL で構築されたモダンな Web アプリケ�
   - **Apollo Explorer:** `GET` エンドポイントで Apollo Explorer を提供し、クエリのテストが可能なプレイグラウンドを利用できます。
   - **GraphQL エンドポイント:** `POST` エンドポイントは `@hono/graphql-server` を使用してリクエストを処理します。
 
+#### データモデル (ER 図)
+
+```mermaid
+erDiagram
+    User ||--o{ Post : "authors"
+    User {
+        uuid id PK
+        string email
+        string name
+        enum roles "ADMIN, USER"
+    }
+    Post ||--|{ PostToCategory : "categorized_in"
+    Post {
+        uuid id PK
+        boolean published
+        string title
+        string content
+        uuid authorId FK
+    }
+    Category ||--|{ PostToCategory : "contains"
+    Category {
+        uuid id PK
+        string name
+    }
+    PostToCategory {
+        uuid postId FK
+        uuid categoryId FK
+    }
+```
+
 ### 認証と認可
 
 セキュリティと使いやすさを考慮したカスタム認証システムを実装しています。
@@ -134,9 +192,29 @@ Next.js の App Router (Server Components) と URQL (Client Components) を組�
       - **目的:** 生のトークンを Client Component の props として露出させるリスクを軽減し、セキュアに SSR コンテキストへ渡すためです。
 
   2.  **復号して使用する (`src/components/UrqlProvider.tsx`):**
+
       - `UrqlProvider` 内で `urql` クライアントを初期化する際、`isServerSide` (SSR 中）であるかを判定します。
       - SSR 中であれば、受け取った暗号化トークンを `decrypt` 関数で復号し、GraphQL リクエストの `cookie` ヘッダーに `auth-token=...` として手動で付与します。
       - これにより、SSR 中に生成されるクエリも認証済みとして処理され、初期表示でユーザー固有のデータを正しく取得できます。
+
+      ```mermaid
+      sequenceDiagram
+          participant Browser
+          participant NextServer as Next.js Server (RSC)
+          participant UrqlProvider as Urql Provider (SSR)
+          participant API as GraphQL API
+
+          Note over Browser, API: Initial Page Load (SSR)
+          Browser->>NextServer: Request Page (Cookie: auth-token)
+          NextServer->>NextServer: Layout: Read Cookie
+          NextServer->>NextServer: Encrypt Token
+          NextServer->>UrqlProvider: Pass Encrypted Token (Props)
+          UrqlProvider->>UrqlProvider: Decrypt Token
+          UrqlProvider->>API: Fetch Query (Header: Cookie=auth-token)
+          API-->>UrqlProvider: Data
+          UrqlProvider-->>NextServer: Hydrate State
+          NextServer-->>Browser: Rendered HTML
+      ```
 
 #### 3. フロントエンドでの利用
 
