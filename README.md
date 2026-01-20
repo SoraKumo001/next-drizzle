@@ -1,8 +1,24 @@
 # next-drizzle
 
-Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。このプロジェクトは、Drizzle ORM で作せした構造を、記述コード最小で GraphQL 化し、Next.js から SSR 対応で呼び出します。また、リレーションを伴うクエリは最適化されているため、GraphQL で問題にされる N+1 は起こりません。
+Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。このプロジェクトは、Drizzle ORM で作せした構造を、記述コード最小で GraphQL 化し、Next.js から SSR 対応で呼び出します。リレーションを伴うクエリは最適化されるため、GraphQL で問題にされる N+1 は起こりません。また、SSR に関してはデータの取得を ClientComponent 上から行うため、サーバーとブラウザでデータの取得処理を一本化できます。
 
-## 機能
+## はじめに
+
+### プロジェクト構成
+
+- `src/`: アプリケーションのソースコード
+  - `app/`: Next.js App Router ページと API ルート
+  - `components/`: 共有 UI コンポーネント（StoreProvider など）
+  - `db/`: Drizzle スキーマとリレーション定義
+  - `generated/`: 生成された GraphQL 型とフック
+  - `hooks/`: カスタム React フック
+  - `libs/`: ユーティリティライブラリ
+  - `server/`: GraphQL サーバーロジックとスキーマビルダー
+- `codegen/`: GraphQL Code Generator 設定
+- `drizzle/`: データベースマイグレーションファイル
+- `tools/`: シーディングと管理用スクリプト
+
+### 機能
 
 - **投稿管理:**
   - 投稿リストの表示（ホームページ）。
@@ -16,7 +32,7 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。こ
 - **カテゴリ管理:**
   - 投稿のカテゴリ分け。
 
-## 技術スタック
+### 技術スタック
 
 - **フレームワーク:** [Next.js](https://nextjs.org/) (App Router)
 - **言語:** TypeScript
@@ -54,22 +70,6 @@ graph TD
     Hono -->|Define Schema| Pothos
     Hono -->|Query/Mutation| DB
 ```
-
-## はじめに
-
-### プロジェクト構成
-
-- `src/`: アプリケーションのソースコード
-  - `app/`: Next.js App Router ページと API ルート
-  - `components/`: 共有 UI コンポーネント（StoreProvider など）
-  - `db/`: Drizzle スキーマとリレーション定義
-  - `generated/`: 生成された GraphQL 型とフック
-  - `hooks/`: カスタム React フック
-  - `libs/`: ユーティリティライブラリ
-  - `server/`: GraphQL サーバーロジックとスキーマビルダー
-- `codegen/`: GraphQL Code Generator 設定
-- `drizzle/`: データベースマイグレーションファイル
-- `tools/`: シーディングと管理用スクリプト
 
 ### 前提条件
 
