@@ -1,6 +1,6 @@
 # next-drizzle
 
-Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。このプロジェクトは、効率的なデータ管理とレンダリングのための最新技術を使用したフルスタックアーキテクチャを実証しています。
+Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。このプロジェクトは、Drizzle ORM で作せした構造を、記述コード最小で GraphQL 化し、Next.js から SSR 対応で呼び出します。また、リレーションを伴うクエリは最適化されているため、GraphQL で問題にされる N+1 は起こりません。
 
 ## 機能
 
@@ -56,6 +56,20 @@ graph TD
 ```
 
 ## はじめに
+
+### プロジェクト構成
+
+- `src/`: アプリケーションのソースコード
+  - `app/`: Next.js App Router ページと API ルート
+  - `components/`: 共有 UI コンポーネント（StoreProvider など）
+  - `db/`: Drizzle スキーマとリレーション定義
+  - `generated/`: 生成された GraphQL 型とフック
+  - `hooks/`: カスタム React フック
+  - `libs/`: ユーティリティライブラリ
+  - `server/`: GraphQL サーバーロジックとスキーマビルダー
+- `codegen/`: GraphQL Code Generator 設定
+- `drizzle/`: データベースマイグレーションファイル
+- `tools/`: シーディングと管理用スクリプト
 
 ### 前提条件
 
@@ -437,96 +451,204 @@ export async function GET(request: Request) {
 }
 ```
 
-### 認証と認可
+## 5. 認証と認可のフロー
 
-セキュリティと使いやすさを考慮したカスタム認証システムを実装しています。
+セキュリティと UX を両立させるため、堅牢な認証フローと、透過的な SSR 対応を実装しています。
 
-#### 1. 認証の仕組み (サーバーサイド)
+### A. 認証 (Authentication)
 
-- **サインインフロー:**
+サーバーサイドでの身元確認プロセスです。
 
-  - ユーザーはメールアドレスでサインインします（デモ用のためパスワードレス）。
-  - `signIn` ミューテーション (`src/server/builder.ts`) がユーザーを検証し、成功すると `jose` ライブラリで JWT (JSON Web Token) を生成します。
-  - トークンは `HttpOnly`, `SameSite: Strict` 属性を持つ `auth-token` Cookie として設定され、XSS 攻撃から保護されます。
+1.  **JWT 生成**: `signIn` Mutation でユーザーを検証後、署名付き JWT を生成します。
+2.  **Cookie 保存**: `HttpOnly`, `SameSite: Strict` 属性を持つ Cookie に保存し、XSS 対策を行います。
+3.  **リクエスト検証**: Hono のミドルウェアがリクエスト毎に検証を行い、コンテキストに `user` オブジェクトを注入します。
 
-- **リクエスト検証:**
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Hono as Hono (Middleware)
+    participant Resolver as GraphQL Resolver
+    participant DB
 
-  - Hono の `authMiddleware` がリクエストごとに Cookie から JWT を検証します。
-  - 検証されたユーザー情報は Hono のコンテキスト (`contextStorage`) に保存され、GraphQL リゾルバからアクセス可能になります。
+    Client->>Hono: GraphQL Request (Cookie: auth-token)
+    Hono->>Hono: Verify JWT
+    alt Valid Token
+        Hono->>Resolver: Execute (context.user = User)
+    else Invalid/No Token
+        Hono->>Resolver: Execute (context.user = null)
+    end
+    Resolver->>DB: Query
+```
 
-- **セキュリティと認可:**
-  - **ミューテーション保護:** Pothos プラグインの設定により、認証されていないユーザーによるデータ変更（ミューテーション）をブロックします。
-  - **行レベルセキュリティ (RLS):** クエリやミューテーションに自動的に `where` 句を注入し、ユーザーが自分のデータのみを操作できるように制御します（例：編集は自分の投稿のみ許可）。
+### B. 認可 (Authorization)
 
-#### 2. SSR 時の認証トークンの取り扱い
+「誰が何をできるか」の制御を、GraphQL スキーマレベルで強制します。
 
-Next.js の App Router (Server Components) と URQL (Client Components) を組み合わせる際、SSR (Server-Side Rendering) 中に認証済みリクエストを行うための特別な処理を実装しています。
+- **Mutation 保護**: 未認証ユーザーによる書き込み操作（作成・更新・削除）を一括でブロック。
+- **行レベルセキュリティ (RLS)**:
+  - **Read**: 公開記事、または自分の下書き記事のみ取得可能。
+  - **Write**: 自分が作成した記事のみ編集・削除可能。
+  - これらは Pothos の `where` オプションで自動的にクエリに組み込まれます。
 
-- **課題:**
+### C. SSR における認証トークンの受け渡し
 
-  - ブラウザからのリクエストには自動的に Cookie が付与されますが、SSR 中に Next.js サーバーから自身の API ルートへ `fetch` する際は、ブラウザの Cookie は自動的に引き継がれません。
-  - そのため、URQL クライアントに認証トークンを明示的に渡す必要があります。
+Next.js (Server Component) から GraphQL API (内部通信）へ認証状態を引き継ぐための仕組みです。
 
-- **解決策:**
+- **課題**: SSR 時の内部 `fetch` リクエストには、ブラウザの Cookie が自動付与されません。
+- **解決策**:
+  1.  `Layout.tsx` (RSC) で Cookie を読み取り、暗号化します。
+  2.  `UrqlProvider` (Client Component) に Props として渡します。
+  3.  `UrqlProvider` 内で復号し、SSR 中の GraphQL リクエストヘッダーに手動でセットします。
 
-  1.  **暗号化して渡す (`src/app/layout.tsx`):**
+```mermaid
+graph LR
+    Browser[Browser] -- Cookie --> RSC[Layout (RSC)]
+    RSC -- Encrypted Token --> CC[UrqlProvider (Client)]
+    CC -- Decrypted Token (Header) --> API[GraphQL API]
+```
 
-      - ルートレイアウト（Server Component）で Cookie から `auth-token` を取得します。
-      - このトークンを `src/libs/encrypt.ts` の `encrypt` 関数で暗号化し、`UrqlProvider` の props として渡します。
-      - **目的:** 生のトークンを Client Component の props として露出させるリスクを軽減し、セキュアに SSR コンテキストへ渡すためです。
+#### 3. フロントエンド統合（状態管理とフック）
 
-  2.  **復号して使用する (`src/components/UrqlProvider.tsx`):**
+サーバーサイドの認証状態（Cookie）と同期しつつ、クライアントサイドでリアクティブな UI を実現するための構成です。
 
-      - `UrqlProvider` 内で `urql` クライアントを初期化する際、`isServerSide` (SSR 中）であるかを判定します。
-      - SSR 中であれば、受け取った暗号化トークンを `decrypt` 関数で復号し、GraphQL リクエストの `cookie` ヘッダーに `auth-token=...` として手動で付与します。
-      - これにより、SSR 中に生成されるクエリも認証済みとして処理され、初期表示でユーザー固有のデータを正しく取得できます。
+##### A. 軽量なグローバル状態管理 (`src/components/StoreProvider.tsx`)
 
-      ```mermaid
-      sequenceDiagram
-          participant Browser
-          participant NextServer as Next.js Server (RSC)
-          participant UrqlProvider as Urql Provider (SSR)
-          participant API as GraphQL API
+React 18 の `useSyncExternalStore` を活用したカスタムストアを実装しています。
 
-          Note over Browser, API: Initial Page Load (SSR)
-          Browser->>NextServer: Request Page (Cookie: auth-token)
-          NextServer->>NextServer: Layout: Read Cookie
-          NextServer->>NextServer: Encrypt Token
-          NextServer->>UrqlProvider: Pass Encrypted Token (Props)
-          UrqlProvider->>UrqlProvider: Decrypt Token
-          UrqlProvider->>API: Fetch Query (Header: Cookie=auth-token)
-          API-->>UrqlProvider: Data
-          UrqlProvider-->>NextServer: Hydrate State
-          NextServer-->>Browser: Rendered HTML
-      ```
+- **特徴**: Redux などの外部ライブラリに依存せず、軽量かつ効率的に「現在のログインユーザー」をアプリケーション全体で共有します。
+- **メリット**: 不要な再レンダリングを防ぎ、SSR データ（`UrqlProvider` 経由で渡される初期状態）との整合性を保ちます。
 
-#### 3. フロントエンドでの利用
+##### B. 認証用カスタムフック (`src/hooks/useAuth.ts`)
 
-フロントエンドでは、認証状態を管理し、ユーザー体験をスムーズにするために以下の仕組みを採用しています。
+認証操作をカプセル化したフックを提供し、コンポーネントから簡単に利用できるようにしています。
 
-- **状態管理 (`src/components/StoreProvider.tsx`):**
+| フック名       | 役割                                                                                   |
+| :------------- | :------------------------------------------------------------------------------------- |
+| `useUser()`    | 現在ログインしているユーザー情報を取得します。                                         |
+| `useSignIn()`  | `signIn` Mutation を実行し、完了後にローカルストアを更新して UI に即座に反映させます。 |
+| `useSignOut()` | `signOut` Mutation を実行し、Cookie 削除とともにローカルストアをリセットします。       |
 
-  - カスタムの `StoreProvider` と `useSyncExternalStore` (React 18) を使用し、アプリケーション全体で軽量かつ効率的にログインユーザー情報を管理しています。
+##### 認証の実装例
 
-- **カスタムフック (`src/hooks/useAuth.ts`):**
+ここではサンプル用にメールアドレスだけで認証を行っています。必要に応じてパスワードや OAuth などの仕組みを導入してください。このサンプルでは、signIn が成功すると、httpOnly の Cookie 作られ、urql のキャッシュを削除します。
 
-  - `useUser()`: 現在ログインしているユーザー情報を取得します。
-  - `useSignIn()`: GraphQL の `signIn` ミューテーションを実行し、成功時にストアを更新します。
-  - `useSignOut()`: `signOut` ミューテーションで Cookie をクリアし、ストアの状態をリセットします。
+```tsx
+"use client";
+import { useFindManyUserQuery } from "@/generated/graphql";
+import { useSignIn } from "@/hooks/useAuth";
+import Link from "next/link";
 
-- **実装例 (`src/app/users/page.tsx`):**
-  - ユーザー一覧画面の "Sign In" ボタンは、`useSignIn` フックを使用して即座にそのユーザーとしてログインするデモ機能を実装しています。
+export default function Home() {
+  const [{ data, fetching, error }] = useFindManyUserQuery();
+  const signIn = useSignIn();
 
-## プロジェクト構成
+  if (fetching) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
-- `src/`: アプリケーションのソースコード
-  - `app/`: Next.js App Router ページと API ルート
-  - `components/`: 共有 UI コンポーネント（StoreProvider など）
-  - `db/`: Drizzle スキーマとリレーション定義
-  - `generated/`: 生成された GraphQL 型とフック
-  - `hooks/`: カスタム React フック
-  - `libs/`: ユーティリティライブラリ
-  - `server/`: GraphQL サーバーロジックとスキーマビルダー
-- `codegen/`: GraphQL Code Generator 設定
-- `drizzle/`: データベースマイグレーションファイル
-- `tools/`: シーディングと管理用スクリプト
+  return (
+    <div className="p-4">
+      <Link href="/" className="text-blue-500 hover:underline mb-4 block">
+        &larr; Back to Home
+      </Link>
+      <h1 className="text-2xl font-bold mb-4">Users</h1>
+      <div className="grid gap-4">
+        {data?.findManyUser?.map((user) => (
+          <div
+            key={user.id}
+            className="border p-4 rounded shadow flex justify-between items-center"
+          >
+            <div>
+              <div className="font-bold">{user.name}</div>
+              <div className="text-gray-500">{user.email}</div>
+            </div>
+            <button
+              onClick={() => signIn(user.email)}
+              className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Sign In
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+## 4. データフェッチと SSR の統合
+
+Next.js App Router 上で、Client Component からのデータ取得を SSR 対応させるための仕組みです。
+
+### `@react-libraries/next-exchange-ssr` の活用
+
+通常、Client Component でのデータ取得（`useQuery`など）はクライアントサイドでのみ実行されますが、本プロジェクトでは `@react-libraries/next-exchange-ssr` を導入することで、以下の挙動を実現しています。
+
+1.  **SSR 時のデータプリフェッチ**: サーバーサイドレンダリング中に実行されたクエリの結果を収集します。
+2.  **ハイドレーション**: 収集したデータを HTML に埋め込み、クライアントサイドでの再フェッチを防ぎます。
+3.  **RSC 不要**: ページコンポーネントを `use client` としても、SEO や初期表示パフォーマンスを損ないません。
+
+### 実装例: 投稿一覧ページ
+
+以下のコードは Client Component ですが、初回アクセス時にはサーバーサイドでデータが取得され、完成された HTML がブラウザに届きます。SSR とブラウザ動作時のロジックが共通の記述になり、データの取得に関してサーバー側専用のコードを書く必要がありません。
+
+- `useUser()`: ログインユーザー情報の取得。
+- `useFindManyPostQuery()`: 投稿データの取得（SSR 対応）。
+
+```tsx
+"use client";
+import { useFindManyPostQuery, OrderBy } from "@/generated/graphql";
+import { useUser } from "@/hooks/useAuth";
+import Link from "next/link";
+
+export default function Home() {
+  const user = useUser();
+  const [{ data, error, fetching }] = useFindManyPostQuery({
+    variables: { orderBy: [{ createdAt: OrderBy.Desc }] },
+  });
+
+  if (fetching) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  return (
+    <div className="p-4 grid gap-4">
+      <Link href="/posts/new" className="btn btn-primary w-fit">
+        Create New Post
+      </Link>
+      <h1 className="text-2xl font-bold">Posts</h1>
+      {data?.findManyPost?.map((post) => (
+        <div
+          key={post.id}
+          className={`card bg-base-100 shadow-xl ${
+            !post.published ? "bg-base-200" : ""
+          } ${user?.id === post.authorId ? "border-2 border-primary" : ""}`}
+        >
+          <div className="card-body">
+            <div className="flex justify-between items-start">
+              <h2 className="card-title">{post.title}</h2>
+              <Link
+                href={`/posts/${post.id}`}
+                className="btn btn-outline btn-primary btn-sm"
+              >
+                Edit
+              </Link>
+            </div>
+            <div className="text-sm text-base-content/70">
+              {post.author && <span>By {post.author.name} • </span>}
+              {new Date(post.createdAt).toLocaleString()}
+            </div>
+            <p className="mt-2">{post.content}</p>
+            {post.categories && post.categories.length > 0 && (
+              <div className="card-actions mt-2">
+                {post.categories.map((category) => (
+                  <div key={category.id} className="badge badge-outline">
+                    {category.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
