@@ -502,9 +502,9 @@ Next.js (Server Component) から GraphQL API (内部通信）へ認証状態を
 
 ```mermaid
 graph LR
-    Browser[Browser] -- Cookie --> RSC[Layout (RSC)]
-    RSC -- Encrypted Token --> CC[UrqlProvider (Client)]
-    CC -- Decrypted Token (Header) --> API[GraphQL API]
+    Browser["Browser"] -- "Cookie" --> RSC["Layout (RSC)"]
+    RSC -- "Encrypted Token" --> CC["UrqlProvider (Client)"]
+    CC -- "Decrypted Token (Header)" --> API["GraphQL API"]
 ```
 
 #### 3. フロントエンド統合（状態管理とフック）
