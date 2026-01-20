@@ -1,36 +1,65 @@
-# next-drizzle
+# Next-Drizzle
 
-Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。このプロジェクトは、Drizzle ORM で作せした構造を、記述コード最小で GraphQL 化し、Next.js から SSR 対応で呼び出します。リレーションを伴うクエリは最適化されるため、GraphQL で問題にされる N+1 は起こりません。また、SSR に関してはデータの取得を ClientComponent 上から行うため、サーバーとブラウザでデータの取得処理を一本化できます。
+Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
+
+このプロジェクトは、Drizzle ORM で定義したデータベース構造を、最小限のコード記述で GraphQL 化し、Next.js から SSR（Server-Side Rendering）対応で呼び出すアーキテクチャを採用しています。
+
+**主な特徴:**
+
+- **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化されます。
+- **データ取得の一元化:** SSR 時のデータ取得を Client Component 上から行う構成により、サーバーとブラウザでデータ取得ロジックを統一できます。
+
+---
+
+## 目次
+
+1.  [はじめに](#はじめに)
+    - [プロジェクト構成](#プロジェクト構成)
+    - [機能](#機能)
+    - [技術スタック](#技術スタック)
+    - [アーキテクチャ概要](#アーキテクチャ概要)
+2.  [インストールとセットアップ](#インストールとセットアップ)
+    - [前提条件](#前提条件)
+    - [手順](#手順)
+3.  [スクリプト一覧](#スクリプト一覧)
+4.  [アーキテクチャと実装詳細](#アーキテクチャと実装詳細)
+    - [GraphQL サーバーとスキーマ設計](#graphql-サーバーとスキーマ設計)
+    - [認証と認可のフロー](#認証と認可のフロー)
+    - [フロントエンド統合（状態管理とフック）](#フロントエンド統合状態管理とフック)
+    - [データフェッチと SSR の統合](#データフェッチと-ssr-の統合)
+
+---
 
 ## はじめに
 
 ### プロジェクト構成
 
-- `src/`: アプリケーションのソースコード
-  - `app/`: Next.js App Router ページと API ルート
-  - `components/`: 共有 UI コンポーネント（StoreProvider など）
-  - `db/`: Drizzle スキーマとリレーション定義
-  - `generated/`: 生成された GraphQL 型とフック
-  - `hooks/`: カスタム React フック
-  - `libs/`: ユーティリティライブラリ
-  - `server/`: GraphQL サーバーロジックとスキーマビルダー
-- `codegen/`: GraphQL Code Generator 設定
-- `drizzle/`: データベースマイグレーションファイル
-- `tools/`: シーディングと管理用スクリプト
+このプロジェクトの主要なディレクトリ構成は以下の通りです。
+
+- **`src/`**: アプリケーションのソースコード
+  - **`app/`**: Next.js App Router ページと API ルート
+  - **`components/`**: 共有 UI コンポーネント（StoreProvider など）
+  - **`db/`**: Drizzle スキーマとリレーション定義
+  - **`generated/`**: 生成された GraphQL 型とフック
+  - **`hooks/`**: カスタム React フック
+  - **`libs/`**: ユーティリティライブラリ
+  - **`server/`**: GraphQL サーバーロジックとスキーマビルダー
+- **`codegen/`**: GraphQL Code Generator 設定
+- **`drizzle/`**: データベースマイグレーションファイル
+- **`tools/`**: シーディングと管理用スクリプト
 
 ### 機能
 
 - **投稿管理:**
-  - 投稿リストの表示（ホームページ）。
-  - 新規投稿の作成（タイトル、コンテンツ、公開ステータス、カテゴリ）。
-  - 既存の投稿の編集。
-  - 投稿の削除。
-  - 下書きシステム（公開/非公開投稿）。
+  - 投稿リストの表示（ホームページ）
+  - 新規投稿の作成（タイトル、コンテンツ、公開ステータス、カテゴリ）
+  - 既存の投稿の編集・削除
+  - 下書きシステム（公開/非公開投稿）
 - **ユーザーシステム:**
-  - ユーザー切り替え/認証（デモ用に簡略化/シミュレート）。
-  - ユーザーロール。
+  - ユーザー切り替え/認証（デモ用に簡略化/シミュレート）
+  - ユーザーロール管理
 - **カテゴリ管理:**
-  - 投稿のカテゴリ分け。
+  - 投稿へのカテゴリ設定
 
 ### 技術スタック
 
@@ -71,62 +100,72 @@ graph TD
     Hono -->|Query/Mutation| DB
 ```
 
+---
+
+## インストールとセットアップ
+
 ### 前提条件
 
 - Node.js (v18+)
-- pnpm (推奨）または npm/yarn
-- Docker (データベース用）
+- pnpm（推奨）, npm, または yarn
+- Docker（データベース用）
 
-### インストールとセットアップ
+### 手順
 
-1.  **依存関係のインストール:**
+1.  **依存関係のインストール**
 
     ```bash
     pnpm install
     ```
 
-2.  **データベースの起動:**
+2.  **データベースの起動**
     Docker Compose を使用して PostgreSQL を起動します。
 
     ```bash
     pnpm docker
     ```
 
-3.  **データベースのセットアップ (マイグレーション & シード):**
-    スキーマの初期化とシードデータのロードを行います。
+3.  **データベースのセットアップ**
+    スキーマの初期化とシードデータのロード（マイグレーション & シード）を行います。
 
     ```bash
     pnpm drizzle:reset
     ```
 
-4.  **開発サーバーの起動:**
+4.  **開発サーバーの起動**
 
     ```bash
     pnpm dev
     ```
 
-5.  **アプリケーションへのアクセス:**
+5.  **アプリケーションへのアクセス**
     ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
 
-## スクリプト
+---
 
-- `dev`: Next.js 開発サーバーを起動します。
-- `docker`: PostgreSQL コンテナを起動します。
-- `graphql:codegen`: GraphQL の変更を監視し、TypeScript の型を生成します。
-- `graphql:schema`: GraphQL スキーマをエクスポートします。
-- `drizzle:generate`: スキーマ変更に基づいて SQL マイグレーションを生成します。
-- `drizzle:migrate`: マイグレーションをデータベースに適用します。
-- `drizzle:seed`: テストデータをデータベースにシードします。
-- `drizzle:reset`: データベースをリセットします（マイグレーション + シード）。
-- `lint`: ESLint を実行します。
+## スクリプト一覧
+
+開発や運用で使用する主要なコマンドです。
+
+| コマンド           | 説明                                                        |
+| :----------------- | :---------------------------------------------------------- |
+| `dev`              | Next.js 開発サーバーを起動します。                          |
+| `docker`           | PostgreSQL コンテナを起動します。                           |
+| `graphql:codegen`  | GraphQL の変更を監視し、TypeScript の型を生成します。       |
+| `graphql:schema`   | GraphQL スキーマをエクスポートします。                      |
+| `drizzle:generate` | スキーマ変更に基づいて SQL マイグレーションを生成します。   |
+| `drizzle:migrate`  | マイグレーションをデータベースに適用します。                |
+| `drizzle:seed`     | テストデータをデータベースにシードします。                  |
+| `drizzle:reset`    | データベースをリセットします（マイグレーション + シード）。 |
+| `lint`             | ESLint を実行します。                                       |
+
+---
 
 ## アーキテクチャと実装詳細
 
-このプロジェクトでは、コードファーストアプローチを使用して GraphQL スキーマを生成し、軽量なサーバーセットアップと堅牢な認証システムを実装しています。
+このプロジェクトでは、**Code-First** アプローチを採用し、開発効率と型安全性を最大化しています。
 
 ### GraphQL サーバーとスキーマ設計
-
-本プロジェクトでは、**Code-First** アプローチを採用し、型安全性と開発効率を最大化しています。
 
 #### 1. データモデル (ER 図)
 
@@ -162,11 +201,11 @@ erDiagram
 
 [Pothos](https://pothos-graphql.dev/) と Drizzle プラグインを組み合わせることで、DB スキーマから GraphQL スキーマを自動生成します。
 
-- **自動化**: `drizzle-orm` の定義を読み取り、Query/Mutation を即座に作成。
-- **セキュリティ (RLS)**:
+- **自動化:** `drizzle-orm` の定義を読み取り、Query/Mutation を即座に作成。
+- **セキュリティ (RLS):**
   - `executable`: 認証済みユーザーのみ Mutation を許可。
-  - `where`: ユーザー ID に基づき、取得・更新できるデータを自動フィルタリング（行レベルセキュリティ）。
-- **カスタマイズ**: 中間テーブルの除外や、システム管理フィールド（`createdAt` など）の入力不可設定。
+  - `where`: ユーザー ID に基づき、取得・更新できるデータを自動フィルタリング。
+- **カスタマイズ:** 中間テーブルの除外や、システム管理フィールド（`createdAt` など）の入力不可設定。
 
 ```ts
 import SchemaBuilder from "@pothos/core";
@@ -333,9 +372,9 @@ export const schema: GraphQLSchema = builder.toSchema({ sortSchema: false });
 
 GraphQL サーバーの実体には、軽量・高速な [Hono](https://hono.dev/) を使用しています。
 
-- **認証ミドルウェア**: Cookie 内の JWT を検証し、コンテキストに `user` をセットします。
-- **Apollo Explorer**: ブラウザでアクセスした際に、クエリをテストできる IDE を提供します。
-- **GraphQL エンドポイント**: `@hono/graphql-server` を使用してリクエストを処理します。
+- **認証ミドルウェア:** Cookie 内の JWT を検証し、コンテキストに `user` をセットします。
+- **Apollo Explorer:** ブラウザアクセス時にクエリをテストできる IDE を提供します。
+- **GraphQL エンドポイント:** `@hono/graphql-server` でリクエストを処理します。
 
 ```ts
 import { graphqlServer } from "@hono/graphql-server";
@@ -436,7 +475,7 @@ app.post("*", authMiddleware, (c, next) => {
 
 #### 4. Next.js Route Handler への統合 (`src/app/api/graphql/route.ts`)
 
-Hono で構築したサーバーは Web Standard API に準拠しているため、Next.js の Route Handler としてそのままマウント可能です。
+Web Standard API に準拠した Hono サーバーを、Next.js Route Handler としてマウントします。
 
 ```ts
 "use server";
@@ -451,17 +490,17 @@ export async function GET(request: Request) {
 }
 ```
 
-## 5. 認証と認可のフロー
+### 認証と認可のフロー
 
 セキュリティと UX を両立させるため、堅牢な認証フローと、透過的な SSR 対応を実装しています。
 
-### A. 認証 (Authentication)
+#### A. 認証 (Authentication)
 
 サーバーサイドでの身元確認プロセスです。
 
-1.  **JWT 生成**: `signIn` Mutation でユーザーを検証後、署名付き JWT を生成します。
-2.  **Cookie 保存**: `HttpOnly`, `SameSite: Strict` 属性を持つ Cookie に保存し、XSS 対策を行います。
-3.  **リクエスト検証**: Hono のミドルウェアがリクエスト毎に検証を行い、コンテキストに `user` オブジェクトを注入します。
+1.  **JWT 生成:** `signIn` Mutation でユーザー検証後、署名付き JWT を生成。
+2.  **Cookie 保存:** `HttpOnly`, `SameSite: Strict` 属性を持つ Cookie に保存（XSS 対策）。
+3.  **リクエスト検証:** Hono ミドルウェアがリクエスト毎に検証し、コンテキストに `user` を注入。
 
 ```mermaid
 sequenceDiagram
@@ -480,25 +519,22 @@ sequenceDiagram
     Resolver->>DB: Query
 ```
 
-### B. 認可 (Authorization)
+#### B. 認可 (Authorization)
 
-「誰が何をできるか」の制御を、GraphQL スキーマレベルで強制します。
+「誰が何をできるか」を GraphQL スキーマレベルで制御します。
 
-- **Mutation 保護**: 未認証ユーザーによる書き込み操作（作成・更新・削除）を一括でブロック。
-- **行レベルセキュリティ (RLS)**:
-  - **Read**: 公開記事、または自分の下書き記事のみ取得可能。
-  - **Write**: 自分が作成した記事のみ編集・削除可能。
-  - これらは Pothos の `where` オプションで自動的にクエリに組み込まれます。
+- **Mutation 保護:** 未認証ユーザーによる書き込み操作（作成・更新・削除）をブロック。
+- **行レベルセキュリティ (RLS):**
+  - **Read:** 公開記事、または自分の下書き記事のみ取得可能。
+  - **Write:** 自分が作成した記事のみ編集・削除可能。
 
-### C. SSR における認証トークンの受け渡し
+#### C. SSR における認証トークンの受け渡し
 
-Next.js (Server Component) から GraphQL API (内部通信）へ認証状態を引き継ぐための仕組みです。
+Next.js (Server Component) から GraphQL API への内部通信ではブラウザの Cookie が自動付与されないため、以下の仕組みで状態を引き継ぎます。
 
-- **課題**: SSR 時の内部 `fetch` リクエストには、ブラウザの Cookie が自動付与されません。
-- **解決策**:
-  1.  `Layout.tsx` (RSC) で Cookie を読み取り、暗号化します。
-  2.  `UrqlProvider` (Client Component) に Props として渡します。
-  3.  `UrqlProvider` 内で復号し、SSR 中の GraphQL リクエストヘッダーに手動でセットします。
+1.  **Layout (RSC):** Cookie を読み取り、暗号化。
+2.  **UrqlProvider (Client):** 暗号化されたトークンを Props として受け取る。
+3.  **GraphQL Request:** トークンを復号し、SSR 中のリクエストヘッダーにセット。
 
 ```mermaid
 graph LR
@@ -507,30 +543,23 @@ graph LR
     CC -- "Decrypted Token (Header)" --> API["GraphQL API"]
 ```
 
-#### 3. フロントエンド統合（状態管理とフック）
+### フロントエンド統合（状態管理とフック）
 
-サーバーサイドの認証状態（Cookie）と同期しつつ、クライアントサイドでリアクティブな UI を実現するための構成です。
+サーバーサイドの認証状態（Cookie）と同期しつつ、クライアントサイドでリアクティブな UI を実現します。
 
-##### A. 軽量なグローバル状態管理 (`src/components/StoreProvider.tsx`)
+#### A. 軽量なグローバル状態管理 (`src/components/StoreProvider.tsx`)
 
-React 18 の `useSyncExternalStore` を活用したカスタムストアを実装しています。
+React 18 の `useSyncExternalStore` を活用し、外部ライブラリ（Redux 等）なしで「現在のログインユーザー」をアプリ全体で共有します。SSR データとの整合性も保たれます。
 
-- **特徴**: Redux などの外部ライブラリに依存せず、軽量かつ効率的に「現在のログインユーザー」をアプリケーション全体で共有します。
-- **メリット**: 不要な再レンダリングを防ぎ、SSR データ（`UrqlProvider` 経由で渡される初期状態）との整合性を保ちます。
+#### B. 認証用カスタムフック (`src/hooks/useAuth.ts`)
 
-##### B. 認証用カスタムフック (`src/hooks/useAuth.ts`)
+| フック名       | 役割                                                              |
+| :------------- | :---------------------------------------------------------------- |
+| `useUser()`    | 現在ログインしているユーザー情報を取得。                          |
+| `useSignIn()`  | ログインを実行し、ローカルストアを更新して UI に即座に反映。      |
+| `useSignOut()` | ログアウトを実行し、Cookie 削除とともにローカルストアをリセット。 |
 
-認証操作をカプセル化したフックを提供し、コンポーネントから簡単に利用できるようにしています。
-
-| フック名       | 役割                                                                                   |
-| :------------- | :------------------------------------------------------------------------------------- |
-| `useUser()`    | 現在ログインしているユーザー情報を取得します。                                         |
-| `useSignIn()`  | `signIn` Mutation を実行し、完了後にローカルストアを更新して UI に即座に反映させます。 |
-| `useSignOut()` | `signOut` Mutation を実行し、Cookie 削除とともにローカルストアをリセットします。       |
-
-##### 認証の実装例
-
-ここではサンプル用にメールアドレスだけで認証を行っています。必要に応じてパスワードや OAuth などの仕組みを導入してください。このサンプルでは、signIn が成功すると、httpOnly の Cookie 作られ、urql のキャッシュを削除します。
+#### 認証の実装例
 
 ```tsx
 "use client";
@@ -575,24 +604,19 @@ export default function Home() {
 }
 ```
 
-## 4. データフェッチと SSR の統合
+### データフェッチと SSR の統合
 
-Next.js App Router 上で、Client Component からのデータ取得を SSR 対応させるための仕組みです。
+Next.js App Router 上で、Client Component からのデータ取得を SSR 対応させています。
 
-### `@react-libraries/next-exchange-ssr` の活用
+#### `@react-libraries/next-exchange-ssr` の活用
 
-通常、Client Component でのデータ取得（`useQuery`など）はクライアントサイドでのみ実行されますが、本プロジェクトでは `@react-libraries/next-exchange-ssr` を導入することで、以下の挙動を実現しています。
+1.  **データプリフェッチ:** SSR 中に実行されたクエリ結果を収集。
+2.  **ハイドレーション:** 収集したデータを HTML に埋め込み、クライアントでの再取得を回避。
+3.  **RSC 不要:** `use client` コンポーネントでも SEO や初期表示パフォーマンスを維持。
 
-1.  **SSR 時のデータプリフェッチ**: サーバーサイドレンダリング中に実行されたクエリの結果を収集します。
-2.  **ハイドレーション**: 収集したデータを HTML に埋め込み、クライアントサイドでの再フェッチを防ぎます。
-3.  **RSC 不要**: ページコンポーネントを `use client` としても、SEO や初期表示パフォーマンスを損ないません。
+#### 実装例: 投稿一覧ページ
 
-### 実装例: 投稿一覧ページ
-
-以下のコードは Client Component ですが、初回アクセス時にはサーバーサイドでデータが取得され、完成された HTML がブラウザに届きます。SSR とブラウザ動作時のロジックが共通の記述になり、データの取得に関してサーバー側専用のコードを書く必要がありません。
-
-- `useUser()`: ログインユーザー情報の取得。
-- `useFindManyPostQuery()`: 投稿データの取得（SSR 対応）。
+Client Component ですが、初回アクセス時はサーバーサイドでデータ取得が行われ、完成された HTML が返されます。
 
 ```tsx
 "use client";
