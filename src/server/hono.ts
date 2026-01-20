@@ -10,17 +10,7 @@ import { schema } from "./builder";
 import type { Context } from "./context.js";
 import type { relations } from "../db/relations";
 import type { Context as HonoContext } from "hono";
-
-/**
- * Helper function to retrieve and validate environment variables.
- */
-const getEnvVariable = (name: string): string => {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is not set`);
-  }
-  return value;
-};
+import { getEnvVariable } from "@/libs/getEnvVariable";
 
 // Secret key for JWT verification
 const SECRET = getEnvVariable("SECRET");

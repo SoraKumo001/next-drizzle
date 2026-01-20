@@ -110,20 +110,11 @@ graph TD
 
 このプロジェクトでは、コードファーストアプローチを使用して GraphQL スキーマを生成し、軽量なサーバーセットアップと堅牢な認証システムを実装しています。
 
-### GraphQL サーバーとスキーマ
+### GraphQL サーバーとスキーマ設計
 
-- **スキーマ生成 (`src/server/builder.ts`):**
+本プロジェクトでは、**Code-First** アプローチを採用し、型安全性と開発効率を最大化しています。
 
-  - **Pothos:** TypeScript 用の型安全な GraphQL スキーマビルダーである [Pothos](https://pothos-graphql.dev/) を使用しています。
-  - **Drizzle Plugin:** `@pothos/plugin-drizzle` および `pothos-drizzle-generator` プラグインを使用し、`src/db/schema.ts` で定義された Drizzle ORM スキーマから GraphQL の型とフィールドを自動生成します。
-  - **カスタマイズ:** 中間テーブル（例: `postsToCategories`）の除外や、入力タイプからのシステムフィールド（例: `createdAt`, `updatedAt`）の除外を行っています。
-
-- **サーバー構成 (`src/server/hono.ts`):**
-  - **Hono:** 高速で軽量な Web フレームワークである [Hono](https://hono.dev/) を GraphQL サーバーとして採用しています。
-  - **Apollo Explorer:** `GET` エンドポイントで Apollo Explorer を提供し、クエリのテストが可能なプレイグラウンドを利用できます。
-  - **GraphQL エンドポイント:** `POST` エンドポイントは `@hono/graphql-server` を使用してリクエストを処理します。
-
-#### データモデル (ER 図)
+#### 1. データモデル (ER 図)
 
 ```mermaid
 erDiagram
@@ -151,6 +142,299 @@ erDiagram
         uuid postId FK
         uuid categoryId FK
     }
+```
+
+#### 2. スキーマの自動生成 (`src/server/builder.ts`)
+
+[Pothos](https://pothos-graphql.dev/) と Drizzle プラグインを組み合わせることで、DB スキーマから GraphQL スキーマを自動生成します。
+
+- **自動化**: `drizzle-orm` の定義を読み取り、Query/Mutation を即座に作成。
+- **セキュリティ (RLS)**:
+  - `executable`: 認証済みユーザーのみ Mutation を許可。
+  - `where`: ユーザー ID に基づき、取得・更新できるデータを自動フィルタリング（行レベルセキュリティ）。
+- **カスタマイズ**: 中間テーブルの除外や、システム管理フィールド（`createdAt` など）の入力不可設定。
+
+```ts
+import SchemaBuilder from "@pothos/core";
+import DrizzlePlugin from "@pothos/plugin-drizzle";
+import { getTableConfig } from "drizzle-orm/pg-core";
+import { GraphQLSchema } from "graphql";
+import { setCookie } from "hono/cookie";
+import { SignJWT } from "jose";
+import PothosDrizzleGeneratorPlugin, {
+  isOperation,
+} from "pothos-drizzle-generator";
+import { relations } from "../db/relations";
+import type { Context } from "./context";
+import type { Context as HonoContext } from "hono";
+import { getEnvVariable } from "../libs/getEnvVariable";
+import { db } from "./drizzle";
+
+// Secret key for JWT token signing and verification
+const SECRET = getEnvVariable("SECRET");
+
+// JWT token expiration time: 400 days in seconds
+const TOKEN_MAX_AGE = 60 * 60 * 24 * 400;
+
+// Cookie configuration shared across authentication operations
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: "strict" as const,
+  path: "/",
+};
+
+// Tables to exclude from GraphQL schema generation
+// Junction tables like "postsToCategories" are typically excluded
+const EXCLUDE_TABLES: Array<keyof typeof relations> = ["postsToCategories"];
+
+export interface PothosTypes {
+  DrizzleRelations: typeof relations;
+  Context: HonoContext<Context>;
+}
+
+/**
+ * Initialize Pothos Schema Builder with plugins:
+ * - DrizzlePlugin: Integrates Drizzle ORM with Pothos
+ * - PothosDrizzleGeneratorPlugin: Automatically generates GraphQL schema from Drizzle schema
+ */
+const builder = new SchemaBuilder<PothosTypes>({
+  plugins: [DrizzlePlugin, PothosDrizzleGeneratorPlugin],
+  drizzle: {
+    client: () => db,
+    relations,
+    getTableConfig,
+  },
+  pothosDrizzleGenerator: {
+    // Exclude specific tables from schema generation (e.g., junction tables)
+    use: { exclude: EXCLUDE_TABLES },
+    // Global configuration applied to all models
+    all: {
+      // Maximum query depth to prevent deeply nested queries (protection against DoS)
+      depthLimit: () => 5,
+      // Controls whether operations (findMany, findFirst, count, create, update, delete) are executable
+      // This guards against unauthorized mutations by requiring authentication
+      executable: ({ operation, ctx }) => {
+        if (isOperation(["mutation"], operation) && !ctx.get("user")) {
+          return false;
+        }
+        return true;
+      },
+      // Configure input fields for create/update operations
+      // Excludes auto-managed system fields from user input
+      inputFields: () => {
+        return { exclude: ["createdAt", "updatedAt"] };
+      },
+    },
+    // Model-specific configuration
+    models: {
+      posts: {
+        // Automatically inject data during create/update operations
+        // Sets authorId to the current authenticated user
+        inputData: ({ ctx }) => {
+          const user = ctx.get("user");
+          if (!user) throw new Error("No permission");
+          return { authorId: user.id };
+        },
+        // Apply WHERE clause filters based on operation type
+        // This implements row-level security
+        where: ({ ctx, operation }) => {
+          // For queries (findMany, findFirst, count): show published posts or user's own posts
+          if (isOperation(["query"], operation)) {
+            return {
+              OR: [{ authorId: ctx.get("user")?.id }, { published: true }],
+            };
+          }
+          // For mutations (create, update, delete): only allow operations on user's own posts
+          if (isOperation(["mutation"], operation)) {
+            return { authorId: ctx.get("user")?.id };
+          }
+        },
+      },
+    },
+  },
+});
+
+builder.queryType({
+  fields: (t) => ({
+    // Returns the currently authenticated user
+    me: t.drizzleField({
+      type: "users",
+      nullable: true,
+      resolve: (_query, _root, _args, ctx) => {
+        const user = ctx.get("user");
+        return user || null;
+      },
+    }),
+  }),
+});
+
+/**
+ * Authentication mutations
+ * Provides user authentication functionality including sign-in, sign-out, and current user retrieval
+ */
+builder.mutationType({
+  fields: (t) => ({
+    // Authenticates a user by email and sets JWT cookie
+    signIn: t.drizzleField({
+      args: { email: t.arg({ type: "String" }) },
+      type: "users",
+      nullable: true,
+      resolve: async (_query, _root, { email }, ctx) => {
+        const user =
+          email &&
+          (await db.query.users.findFirst({ where: { email: email } }));
+        if (!user) {
+          // Authentication failed: clear any existing auth cookie
+          setCookie(ctx, "auth-token", "", { ...COOKIE_OPTIONS, maxAge: 0 });
+        } else {
+          // Authentication successful: generate JWT and set secure cookie
+          const token = await new SignJWT({ user: user })
+            .setProtectedHeader({ alg: "HS256" })
+            .sign(new TextEncoder().encode(SECRET));
+          setCookie(ctx, "auth-token", token, {
+            ...COOKIE_OPTIONS,
+            maxAge: TOKEN_MAX_AGE,
+          });
+        }
+        return user || null;
+      },
+    }),
+    // Signs out the current user by clearing the authentication cookie
+    signOut: t.field({
+      args: {},
+      type: "Boolean",
+      nullable: true,
+      resolve: async (_root, _args, ctx) => {
+        setCookie(ctx, "auth-token", "", { ...COOKIE_OPTIONS, maxAge: 0 });
+        return true;
+      },
+    }),
+  }),
+});
+
+export const schema: GraphQLSchema = builder.toSchema({ sortSchema: false });
+```
+
+#### 3. Hono によるサーバー構築 (`src/server/hono.ts`)
+
+GraphQL サーバーの実体には、軽量・高速な [Hono](https://hono.dev/) を使用しています。
+
+- **認証ミドルウェア**: Cookie 内の JWT を検証し、コンテキストに `user` をセットします。
+- **Apollo Explorer**: ブラウザでアクセスした際に、クエリをテストできる IDE を提供します。
+- **GraphQL エンドポイント**: `@hono/graphql-server` を使用してリクエストを処理します。
+
+```ts
+import { graphqlServer } from "@hono/graphql-server";
+import { explorer } from "apollo-explorer/html";
+import { generate } from "graphql-auto-query";
+import { Hono } from "hono";
+import { contextStorage } from "hono/context-storage";
+import { getContext } from "hono/context-storage";
+import { getCookie } from "hono/cookie";
+import { jwtVerify } from "jose";
+import { schema } from "./builder";
+import type { Context } from "./context.js";
+import type { relations } from "../db/relations";
+import type { Context as HonoContext } from "hono";
+import { getEnvVariable } from "@/libs/getEnvVariable";
+
+// Secret key for JWT verification
+const SECRET = getEnvVariable("SECRET");
+
+// Cookie name for authentication token
+const AUTH_TOKEN_COOKIE = "auth-token";
+
+// Apollo Explorer introspection interval (10 seconds)
+const INTROSPECTION_INTERVAL = 10000;
+
+// Sample query generation depth
+const QUERY_GENERATION_DEPTH = 1;
+
+/**
+ * Middleware to extract and verify JWT token from cookies
+ * Sets the authenticated user in the request context
+ */
+const authMiddleware = async (
+  c: HonoContext<Context>,
+  next: () => Promise<void>
+) => {
+  const cookies = getCookie(c);
+  const token = cookies[AUTH_TOKEN_COOKIE] ?? "";
+
+  /**
+   * Verify JWT token and extract user information
+   * If verification fails (invalid/expired token), user will be undefined
+   */
+  const user = await jwtVerify(token, new TextEncoder().encode(SECRET))
+    .then(
+      (data) => data.payload.user as typeof relations.users.table.$inferSelect
+    )
+    .catch(() => undefined);
+  // Store user in request context
+  const context = getContext<Context>();
+  context.set("user", user);
+
+  return next();
+};
+
+/**
+ * Initialize Hono application with custom context type
+ * The Context type provides type-safe access to user authentication state
+ */
+export const app = new Hono<Context>();
+
+/**
+ * Enable context storage middleware
+ * This allows access to the request context from anywhere in the application
+ */
+app.use(contextStorage());
+
+/**
+ * Apollo Explorer endpoint
+ * Provides an interactive GraphQL IDE for testing queries and mutations
+ */
+app.get("*", (c) => {
+  return c.html(
+    explorer({
+      initialState: {
+        // Auto-generate sample GraphQL operations from the schema
+        document: generate(schema, QUERY_GENERATION_DEPTH),
+      },
+      // GraphQL endpoint URL for the explorer to connect to
+      endpointUrl: c.req.url,
+      // Automatically refresh schema periodically
+      introspectionInterval: INTROSPECTION_INTERVAL,
+    })
+  );
+});
+
+/**
+ * GraphQL endpoint
+ * Handles GraphQL queries and mutations via POST requests
+ * Authentication is handled by the authMiddleware
+ */
+app.post("*", authMiddleware, (c, next) => {
+  return graphqlServer({
+    schema,
+  })(c, next);
+});
+```
+
+#### 4. Next.js Route Handler への統合 (`src/app/api/graphql/route.ts`)
+
+Hono で構築したサーバーは Web Standard API に準拠しているため、Next.js の Route Handler としてそのままマウント可能です。
+
+```ts
+"use server";
+import { app } from "../../../server/hono";
+
+export async function POST(request: Request) {
+  return app.fetch(request);
+}
+
+export async function GET(request: Request) {
+  return app.fetch(request);
+}
 ```
 
 ### 認証と認可
