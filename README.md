@@ -52,14 +52,19 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
 - **投稿管理:**
   - 投稿リストの表示（ホームページ）
+  - 投稿詳細の表示（リードオンリービュー）
   - 新規投稿の作成（タイトル、コンテンツ、公開ステータス、カテゴリ）
   - 既存の投稿の編集・削除
   - 下書きシステム（公開/非公開投稿）
 - **ユーザーシステム:**
   - ユーザー切り替え/認証（デモ用に簡略化/シミュレート）
+  - ユーザーごとの投稿数表示
+  - ログイン時の自動リダイレクト
   - ユーザーロール管理
 - **カテゴリ管理:**
   - 投稿へのカテゴリ設定
+- **管理機能:**
+  - データのシード（初期化）リセット機能（ヘッダーボタン）
 
 ### 技術スタック
 
@@ -68,7 +73,7 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 - **データベース:** PostgreSQL
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
 - **API:** GraphQL (サーバー: Hono + Pothos, クライアント: Urql)
-- **スタイリング:** Tailwind CSS
+- **スタイリング:** Tailwind CSS + DaisyUI
 - **認証:** カスタム JWT 認証
 - **コード生成:** GraphQL Codegen
 
@@ -566,10 +571,12 @@ React 18 の `useSyncExternalStore` を活用し、外部ライブラリ（Redux
 import { useFindManyUserQuery } from "@/generated/graphql";
 import { useSignIn } from "@/hooks/useAuth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const [{ data, fetching, error }] = useFindManyUserQuery();
+export default function Users() {
+  const [{ data, fetching, error }, executeQuery] = useFindManyUserQuery();
   const signIn = useSignIn();
+  const router = useRouter();
 
   if (fetching) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -586,12 +593,20 @@ export default function Home() {
             key={user.id}
             className="border p-4 rounded shadow flex justify-between items-center"
           >
-            <div>
-              <div className="font-bold">{user.name}</div>
-              <div className="text-gray-500">{user.email}</div>
+            <div className="flex gap-2 items-center">
+              <div>
+                <div className="font-bold">{user.name}</div>
+                <div className="text-gray-500">{user.email}</div>
+              </div>
+              {user.postsCount !== undefined && (
+                <div className="badge badge-secondary">{user.postsCount} posts</div>
+              )}
             </div>
             <button
-              onClick={() => signIn(user.email)}
+              onClick={async () => {
+                await signIn(user.email);
+                router.push("/");
+              }}
               className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Sign In
@@ -623,9 +638,11 @@ Client Component ですが、初回アクセス時はサーバーサイドでデ
 import { useFindManyPostQuery, OrderBy } from "@/generated/graphql";
 import { useUser } from "@/hooks/useAuth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const user = useUser();
+  const router = useRouter();
   const [{ data, error, fetching }] = useFindManyPostQuery({
     variables: { orderBy: [{ createdAt: OrderBy.Desc }] },
   });
@@ -641,19 +658,23 @@ export default function Home() {
       {data?.findManyPost?.map((post) => (
         <div
           key={post.id}
-          className={`card bg-base-100 shadow-xl ${
+          onClick={() => router.push(`/posts/${post.id}`)}
+          className={`cursor-pointer card bg-base-100 shadow-xl ${
             !post.published ? "bg-base-200" : ""
           } ${user?.id === post.authorId ? "border-2 border-primary" : ""}`}
         >
           <div className="card-body">
             <div className="flex justify-between items-start">
               <h2 className="card-title">{post.title}</h2>
-              <Link
-                href={`/posts/${post.id}`}
-                className="btn btn-outline btn-primary btn-sm"
-              >
-                Edit
-              </Link>
+              {user?.id === post.authorId && (
+                <Link
+                  href={`/posts/${post.id}/edit`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="btn btn-outline btn-primary btn-sm"
+                >
+                  Edit
+                </Link>
+              )}
             </div>
             <div className="text-sm text-base-content/70">
               {post.author && <span>By {post.author.name} • </span>}
