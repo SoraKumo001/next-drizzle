@@ -503,6 +503,22 @@ export async function GET(request: Request) {
 }
 ```
 
+#### 5. クライアント用クエリの自動生成 (`graphql-auto-query`)
+
+このプロジェクトでは、`graphql-auto-query` を使用して、GraphQL スキーマからクライアントサイドで使用するクエリ（オペレーション）を自動生成しています。これにより、手動でのクエリ記述の手間を省き、開発効率を向上させています。
+
+- **CLI での生成:**
+  `npm run graphql:schema` コマンド実行時に、エクスポートされたスキーマ (`codegen/schema.graphql`) を元に、利用可能なすべての Query と Mutation を網羅した `.graphql` ファイル (`graphql/query.graphql`) を生成します。
+
+  ```json
+  "scripts": {
+    "graphql:schema": "tsx ./tools/export-schema.ts && graphql-auto-query ./codegen/schema.graphql -o ./graphql/query.graphql"
+  }
+  ```
+
+- **Apollo Explorer での活用:**
+  `src/server/hono.ts` 内でも `graphql-auto-query` の `generate` 関数を使用し、Apollo Explorer の初期状態としてサンプルクエリを自動セットしています。これにより、開発者はブラウザですぐに動作確認を行えます。
+
 ### 認証と認可のフロー
 
 セキュリティと UX を両立させるため、堅牢な認証フローと、透過的な SSR 対応を実装しています。
