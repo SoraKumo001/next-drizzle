@@ -32,6 +32,14 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
 ## はじめに
 
+### 動作サンプル
+
+https://next-drizzle-one.vercel.app/
+
+### リポジトリ
+
+https://github.com/SoraKumo001/next-drizzle
+
 ### プロジェクト構成
 
 このプロジェクトの主要なディレクトリ構成は以下の通りです。
@@ -599,7 +607,9 @@ export default function Users() {
                 <div className="text-gray-500">{user.email}</div>
               </div>
               {user.postsCount !== undefined && (
-                <div className="badge badge-secondary">{user.postsCount} posts</div>
+                <div className="badge badge-secondary">
+                  {user.postsCount} posts
+                </div>
               )}
             </div>
             <button
