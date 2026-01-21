@@ -32,7 +32,7 @@ export default function PostDetail({
   const isAuthor = user?.id === post.authorId;
 
   return (
-    <div className="container mx-auto p-4 max-w-5xl">
+    <div className="p-4">
       <Link href="/" className="btn btn-ghost btn-sm mb-4">
         &larr; Back to Home
       </Link>
@@ -65,7 +65,7 @@ export default function PostDetail({
 
           <div className="divider"></div>
 
-          <div className="prose">
+          <div className="prose max-w-none">
             <p className="whitespace-pre-wrap text-lg leading-relaxed">
               {post.content}
             </p>

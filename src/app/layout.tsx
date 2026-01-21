@@ -36,11 +36,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Tokenの取得
+  // Get token from cookies
   const token = await cookies().then((v) => v.get("auth-token")?.value);
-  // GraphQL用のホスト名を割り出す
+  // Get origin for GraphQL client
   const host = await getOrigin();
-  // ユーザ情報のデコード
+  // Verify user token
   const user =
     token &&
     (await jwtVerify<{ payload: { user?: typeof users.$inferSelect } }>(
@@ -59,7 +59,7 @@ export default async function RootLayout({
     >
       <UrqlProvider
         host={host}
-        // tokenを暗号化してClientComponentに渡す
+        // Pass encrypted token to Client Component
         token={token && encrypt(token, process.env.secret ?? "")}
       >
         <html lang="en">

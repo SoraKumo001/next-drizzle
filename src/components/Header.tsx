@@ -23,17 +23,17 @@ export const Header = () => {
         </Link>
         <div
           className="tooltip tooltip-bottom"
-          data-tip="データを初期化して再生成"
+          data-tip="Reset Seed Data"
         >
           <button
             className="btn btn-warning btn-outline btn-sm"
             disabled={fetching}
             onClick={async () => {
               if (
-                confirm("Seedを生成しますか？現在のデータは全て削除されます。")
+                confirm("This will reset all data and seed the database. Are you sure?")
               ) {
                 await seeds({}).then(clearUrqlCache);
-                alert("Seedが生成されました");
+                alert("Seed data has been reset.");
               }
             }}
           >
