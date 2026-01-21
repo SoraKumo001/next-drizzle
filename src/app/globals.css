@@ -1,9 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
 @import "tailwindcss";
 @plugin "daisyui" {
   exclude: properties;
   logs: false;
 }
-@source "../node_modules/react-daisyui/dist";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

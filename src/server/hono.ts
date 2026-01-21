@@ -6,11 +6,11 @@ import { contextStorage } from "hono/context-storage";
 import { getContext } from "hono/context-storage";
 import { getCookie } from "hono/cookie";
 import { jwtVerify } from "jose";
-import { schema } from "./builder";
 import type { Context } from "./context.js";
 import type { relations } from "../db/relations";
 import type { Context as HonoContext } from "hono";
 import { getEnvVariable } from "@/libs/getEnvVariable";
+import { schema } from "./operations";
 
 // Secret key for JWT verification
 const SECRET = getEnvVariable("SECRET");

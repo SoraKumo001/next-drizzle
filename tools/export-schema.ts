@@ -1,7 +1,7 @@
 import "dotenv/config";
+import { schema } from "@/server/operations";
 import fs from "fs";
 import { printSchema } from "graphql";
-import { schema } from "../src/server/builder";
 
 const main = async () => {
   fs.writeFileSync("./codegen/schema.graphql", printSchema(schema));

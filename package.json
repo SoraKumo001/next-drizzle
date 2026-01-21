@@ -13,8 +13,8 @@
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "tsx tools/migrate",
     "drizzle:seed": "tsx tools/seed",
-    "graphql:schema": "tsx ./tools/export-schema.ts",
-    "graphql:codegen": "graphql-codegen -c codegen/codegen.ts -w"
+    "graphql:schema": "tsx ./tools/export-schema.ts && graphql-auto-query ./codegen/schema.graphql -o ./graphql/query.graphql",
+    "graphql:codegen": "npm run graphql:schema && graphql-codegen -c codegen/codegen.ts -w"
   },
   "dependencies": {
     "@hono/graphql-server": "^0.7.0",

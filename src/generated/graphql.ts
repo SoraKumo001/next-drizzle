@@ -159,6 +159,7 @@ export type Mutation = {
   deleteCategory: Array<Category>;
   deletePost: Array<Post>;
   deleteUser: Array<User>;
+  seeds?: Maybe<Scalars['Boolean']['output']>;
   signIn?: Maybe<User>;
   signOut?: Maybe<Scalars['Boolean']['output']>;
   updateCategory: Array<Category>;
@@ -511,10 +512,20 @@ export type MeQueryVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } | null };
 
 export type FindManyCategoryQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -526,10 +537,20 @@ export type FindManyCategoryQueryVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type FindManyCategoryQuery = { __typename?: 'Query', findManyCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type FindManyCategoryQuery = { __typename?: 'Query', findManyCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type FindFirstCategoryQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -540,10 +561,20 @@ export type FindFirstCategoryQueryVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type FindFirstCategoryQuery = { __typename?: 'Query', findFirstCategory?: { __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null };
+export type FindFirstCategoryQuery = { __typename?: 'Query', findFirstCategory?: { __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } | null };
 
 export type CountCategoryQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -564,14 +595,24 @@ export type FindManyPostQueryVariables = Exact<{
   authorLimit?: InputMaybe<Scalars['Int']['input']>;
   authorWhere?: InputMaybe<UserWhere>;
   authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
   categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
   categoriesWhere?: InputMaybe<CategoryWhere>;
   categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
 }>;
 
 
-export type FindManyPostQuery = { __typename?: 'Query', findManyPost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> };
+export type FindManyPostQuery = { __typename?: 'Query', findManyPost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> }> };
 
 export type FindFirstPostQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -583,14 +624,24 @@ export type FindFirstPostQueryVariables = Exact<{
   authorLimit?: InputMaybe<Scalars['Int']['input']>;
   authorWhere?: InputMaybe<UserWhere>;
   authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
   categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
   categoriesWhere?: InputMaybe<CategoryWhere>;
   categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
 }>;
 
 
-export type FindFirstPostQuery = { __typename?: 'Query', findFirstPost?: { __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> } | null };
+export type FindFirstPostQuery = { __typename?: 'Query', findFirstPost?: { __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> } | null };
 
 export type CountPostQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -610,10 +661,20 @@ export type FindManyUserQueryVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type FindManyUserQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type FindManyUserQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type FindFirstUserQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -624,10 +685,20 @@ export type FindFirstUserQueryVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type FindFirstUserQuery = { __typename?: 'Query', findFirstUser?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null };
+export type FindFirstUserQuery = { __typename?: 'Query', findFirstUser?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } | null };
 
 export type CountUserQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -644,15 +715,30 @@ export type SignInMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null };
+export type SignInMutation = { __typename?: 'Mutation', signIn?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } | null };
 
 export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SignOutMutation = { __typename?: 'Mutation', signOut?: boolean | null };
+
+export type SeedsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SeedsMutation = { __typename?: 'Mutation', seeds?: boolean | null };
 
 export type CreateOneCategoryMutationVariables = Exact<{
   input: CategoryCreate;
@@ -661,10 +747,20 @@ export type CreateOneCategoryMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type CreateOneCategoryMutation = { __typename?: 'Mutation', createOneCategory: { __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } };
+export type CreateOneCategoryMutation = { __typename?: 'Mutation', createOneCategory: { __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } };
 
 export type CreateManyCategoryMutationVariables = Exact<{
   input: Array<CategoryCreate> | CategoryCreate;
@@ -673,10 +769,20 @@ export type CreateManyCategoryMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type CreateManyCategoryMutation = { __typename?: 'Mutation', createManyCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type CreateManyCategoryMutation = { __typename?: 'Mutation', createManyCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type UpdateCategoryMutationVariables = Exact<{
   input: CategoryUpdate;
@@ -686,10 +792,20 @@ export type UpdateCategoryMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type DeleteCategoryMutationVariables = Exact<{
   where?: InputMaybe<CategoryWhere>;
@@ -698,10 +814,20 @@ export type DeleteCategoryMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type CreateOnePostMutationVariables = Exact<{
   input: PostCreate;
@@ -711,14 +837,24 @@ export type CreateOnePostMutationVariables = Exact<{
   authorLimit?: InputMaybe<Scalars['Int']['input']>;
   authorWhere?: InputMaybe<UserWhere>;
   authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
   categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
   categoriesWhere?: InputMaybe<CategoryWhere>;
   categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
 }>;
 
 
-export type CreateOnePostMutation = { __typename?: 'Mutation', createOnePost: { __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> } };
+export type CreateOnePostMutation = { __typename?: 'Mutation', createOnePost: { __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> } };
 
 export type CreateManyPostMutationVariables = Exact<{
   input: Array<PostCreate> | PostCreate;
@@ -728,14 +864,24 @@ export type CreateManyPostMutationVariables = Exact<{
   authorLimit?: InputMaybe<Scalars['Int']['input']>;
   authorWhere?: InputMaybe<UserWhere>;
   authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
   categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
   categoriesWhere?: InputMaybe<CategoryWhere>;
   categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
 }>;
 
 
-export type CreateManyPostMutation = { __typename?: 'Mutation', createManyPost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> };
+export type CreateManyPostMutation = { __typename?: 'Mutation', createManyPost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> }> };
 
 export type UpdatePostMutationVariables = Exact<{
   input: PostUpdate;
@@ -746,17 +892,59 @@ export type UpdatePostMutationVariables = Exact<{
   authorLimit?: InputMaybe<Scalars['Int']['input']>;
   authorWhere?: InputMaybe<UserWhere>;
   authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
   categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
   categoriesWhere?: InputMaybe<CategoryWhere>;
   categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
 }>;
 
 
-export type UpdatePostMutation = { __typename?: 'Mutation', updatePost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> };
+export type UpdatePostMutation = { __typename?: 'Mutation', updatePost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> }> };
 
 export type DeletePostMutationVariables = Exact<{
   where?: InputMaybe<PostWhere>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
+  postsCountWhere2?: InputMaybe<PostWhere>;
+  postsOffset2?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit2?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere2?: InputMaybe<PostWhere>;
+  postsOrderBy2?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+}>;
+
+
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } | null, categories: Array<{ __typename?: 'Category', postsCount: number, id: string, name: string, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> }> };
+
+export type CreateOneUserMutationVariables = Exact<{
+  input: UserCreate;
+  postsCountWhere?: InputMaybe<PostWhere>;
+  postsOffset?: InputMaybe<Scalars['Int']['input']>;
+  postsLimit?: InputMaybe<Scalars['Int']['input']>;
+  postsWhere?: InputMaybe<PostWhere>;
+  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
   authorCountWhere?: InputMaybe<UserWhere>;
   categoriesCountWhere?: InputMaybe<CategoryWhere>;
   authorOffset?: InputMaybe<Scalars['Int']['input']>;
@@ -770,19 +958,7 @@ export type DeletePostMutationVariables = Exact<{
 }>;
 
 
-export type DeletePostMutation = { __typename?: 'Mutation', deletePost: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> };
-
-export type CreateOneUserMutationVariables = Exact<{
-  input: UserCreate;
-  postsCountWhere?: InputMaybe<PostWhere>;
-  postsOffset?: InputMaybe<Scalars['Int']['input']>;
-  postsLimit?: InputMaybe<Scalars['Int']['input']>;
-  postsWhere?: InputMaybe<PostWhere>;
-  postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
-}>;
-
-
-export type CreateOneUserMutation = { __typename?: 'Mutation', createOneUser: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> } };
+export type CreateOneUserMutation = { __typename?: 'Mutation', createOneUser: { __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> } };
 
 export type CreateManyUserMutationVariables = Exact<{
   input: Array<UserCreate> | UserCreate;
@@ -791,10 +967,20 @@ export type CreateManyUserMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type CreateManyUserMutation = { __typename?: 'Mutation', createManyUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type CreateManyUserMutation = { __typename?: 'Mutation', createManyUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type UpdateUserMutationVariables = Exact<{
   input: UserUpdate;
@@ -804,10 +990,20 @@ export type UpdateUserMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export type DeleteUserMutationVariables = Exact<{
   where?: InputMaybe<UserWhere>;
@@ -816,10 +1012,20 @@ export type DeleteUserMutationVariables = Exact<{
   postsLimit?: InputMaybe<Scalars['Int']['input']>;
   postsWhere?: InputMaybe<PostWhere>;
   postsOrderBy?: InputMaybe<Array<PostOrderBy> | PostOrderBy>;
+  authorCountWhere?: InputMaybe<UserWhere>;
+  categoriesCountWhere?: InputMaybe<CategoryWhere>;
+  authorOffset?: InputMaybe<Scalars['Int']['input']>;
+  authorLimit?: InputMaybe<Scalars['Int']['input']>;
+  authorWhere?: InputMaybe<UserWhere>;
+  authorOrderBy?: InputMaybe<Array<UserOrderBy> | UserOrderBy>;
+  categoriesOffset?: InputMaybe<Scalars['Int']['input']>;
+  categoriesLimit?: InputMaybe<Scalars['Int']['input']>;
+  categoriesWhere?: InputMaybe<CategoryWhere>;
+  categoriesOrderBy?: InputMaybe<Array<CategoryOrderBy> | CategoryOrderBy>;
 }>;
 
 
-export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string }> }> };
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: Array<{ __typename?: 'User', postsCount: number, id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string, posts: Array<{ __typename?: 'Post', authorCount: number, categoriesCount: number, id: string, published: boolean, title: string, content: string, authorId?: string | null, createdAt: Date | string, updatedAt: Date | string, publishedAt: Date | string, author?: { __typename?: 'User', id: string, email: string, name: string, roles: Array<Role>, createdAt: Date | string, updatedAt: Date | string } | null, categories: Array<{ __typename?: 'Category', id: string, name: string, createdAt: Date | string, updatedAt: Date | string }> }> }> };
 
 export const CategoryFragmentDoc = gql`
     fragment category on Category {
@@ -852,7 +1058,7 @@ export const UserFragmentDoc = gql`
 }
     `;
 export const MeDocument = gql`
-    query Me($postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    query Me($postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   me {
     ...user
     postsCount(where: $postsCountWhere)
@@ -863,17 +1069,36 @@ export const MeDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
   return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
 };
 export const FindManyCategoryDocument = gql`
-    query FindManyCategory($offset: Int, $limit: Int, $where: CategoryWhere, $orderBy: [CategoryOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    query FindManyCategory($offset: Int, $limit: Int, $where: CategoryWhere, $orderBy: [CategoryOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   findManyCategory(
     offset: $offset
     limit: $limit
@@ -889,17 +1114,36 @@ export const FindManyCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useFindManyCategoryQuery(options?: Omit<Urql.UseQueryArgs<FindManyCategoryQueryVariables>, 'query'>) {
   return Urql.useQuery<FindManyCategoryQuery, FindManyCategoryQueryVariables>({ query: FindManyCategoryDocument, ...options });
 };
 export const FindFirstCategoryDocument = gql`
-    query FindFirstCategory($offset: Int, $where: CategoryWhere, $orderBy: [CategoryOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    query FindFirstCategory($offset: Int, $where: CategoryWhere, $orderBy: [CategoryOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   findFirstCategory(offset: $offset, where: $where, orderBy: $orderBy) {
     ...category
     postsCount(where: $postsCountWhere)
@@ -910,11 +1154,30 @@ export const FindFirstCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useFindFirstCategoryQuery(options?: Omit<Urql.UseQueryArgs<FindFirstCategoryQueryVariables>, 'query'>) {
   return Urql.useQuery<FindFirstCategoryQuery, FindFirstCategoryQueryVariables>({ query: FindFirstCategoryDocument, ...options });
@@ -929,7 +1192,7 @@ export function useCountCategoryQuery(options?: Omit<Urql.UseQueryArgs<CountCate
   return Urql.useQuery<CountCategoryQuery, CountCategoryQueryVariables>({ query: CountCategoryDocument, ...options });
 };
 export const FindManyPostDocument = gql`
-    query FindManyPost($offset: Int, $limit: Int, $where: PostWhere, $orderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    query FindManyPost($offset: Int, $limit: Int, $where: PostWhere, $orderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   findManyPost(offset: $offset, limit: $limit, where: $where, orderBy: $orderBy) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -941,6 +1204,15 @@ export const FindManyPostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -949,6 +1221,15 @@ export const FindManyPostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -960,7 +1241,7 @@ export function useFindManyPostQuery(options?: Omit<Urql.UseQueryArgs<FindManyPo
   return Urql.useQuery<FindManyPostQuery, FindManyPostQueryVariables>({ query: FindManyPostDocument, ...options });
 };
 export const FindFirstPostDocument = gql`
-    query FindFirstPost($offset: Int, $where: PostWhere, $orderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    query FindFirstPost($offset: Int, $where: PostWhere, $orderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   findFirstPost(offset: $offset, where: $where, orderBy: $orderBy) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -972,6 +1253,15 @@ export const FindFirstPostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -980,6 +1270,15 @@ export const FindFirstPostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -1000,7 +1299,7 @@ export function useCountPostQuery(options?: Omit<Urql.UseQueryArgs<CountPostQuer
   return Urql.useQuery<CountPostQuery, CountPostQueryVariables>({ query: CountPostDocument, ...options });
 };
 export const FindManyUserDocument = gql`
-    query FindManyUser($offset: Int, $limit: Int, $where: UserWhere, $orderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    query FindManyUser($offset: Int, $limit: Int, $where: UserWhere, $orderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   findManyUser(offset: $offset, limit: $limit, where: $where, orderBy: $orderBy) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1011,17 +1310,36 @@ export const FindManyUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useFindManyUserQuery(options?: Omit<Urql.UseQueryArgs<FindManyUserQueryVariables>, 'query'>) {
   return Urql.useQuery<FindManyUserQuery, FindManyUserQueryVariables>({ query: FindManyUserDocument, ...options });
 };
 export const FindFirstUserDocument = gql`
-    query FindFirstUser($offset: Int, $where: UserWhere, $orderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    query FindFirstUser($offset: Int, $where: UserWhere, $orderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   findFirstUser(offset: $offset, where: $where, orderBy: $orderBy) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1032,11 +1350,30 @@ export const FindFirstUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useFindFirstUserQuery(options?: Omit<Urql.UseQueryArgs<FindFirstUserQueryVariables>, 'query'>) {
   return Urql.useQuery<FindFirstUserQuery, FindFirstUserQueryVariables>({ query: FindFirstUserDocument, ...options });
@@ -1051,7 +1388,7 @@ export function useCountUserQuery(options?: Omit<Urql.UseQueryArgs<CountUserQuer
   return Urql.useQuery<CountUserQuery, CountUserQueryVariables>({ query: CountUserDocument, ...options });
 };
 export const SignInDocument = gql`
-    mutation SignIn($email: String, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation SignIn($email: String, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   signIn(email: $email) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1062,11 +1399,30 @@ export const SignInDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useSignInMutation() {
   return Urql.useMutation<SignInMutation, SignInMutationVariables>(SignInDocument);
@@ -1080,8 +1436,17 @@ export const SignOutDocument = gql`
 export function useSignOutMutation() {
   return Urql.useMutation<SignOutMutation, SignOutMutationVariables>(SignOutDocument);
 };
+export const SeedsDocument = gql`
+    mutation Seeds {
+  seeds
+}
+    `;
+
+export function useSeedsMutation() {
+  return Urql.useMutation<SeedsMutation, SeedsMutationVariables>(SeedsDocument);
+};
 export const CreateOneCategoryDocument = gql`
-    mutation CreateOneCategory($input: CategoryCreate!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation CreateOneCategory($input: CategoryCreate!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   createOneCategory(input: $input) {
     ...category
     postsCount(where: $postsCountWhere)
@@ -1092,17 +1457,36 @@ export const CreateOneCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useCreateOneCategoryMutation() {
   return Urql.useMutation<CreateOneCategoryMutation, CreateOneCategoryMutationVariables>(CreateOneCategoryDocument);
 };
 export const CreateManyCategoryDocument = gql`
-    mutation CreateManyCategory($input: [CategoryCreate!]!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation CreateManyCategory($input: [CategoryCreate!]!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   createManyCategory(input: $input) {
     ...category
     postsCount(where: $postsCountWhere)
@@ -1113,17 +1497,36 @@ export const CreateManyCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useCreateManyCategoryMutation() {
   return Urql.useMutation<CreateManyCategoryMutation, CreateManyCategoryMutationVariables>(CreateManyCategoryDocument);
 };
 export const UpdateCategoryDocument = gql`
-    mutation UpdateCategory($input: CategoryUpdate!, $where: CategoryWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation UpdateCategory($input: CategoryUpdate!, $where: CategoryWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   updateCategory(input: $input, where: $where) {
     ...category
     postsCount(where: $postsCountWhere)
@@ -1134,17 +1537,36 @@ export const UpdateCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useUpdateCategoryMutation() {
   return Urql.useMutation<UpdateCategoryMutation, UpdateCategoryMutationVariables>(UpdateCategoryDocument);
 };
 export const DeleteCategoryDocument = gql`
-    mutation DeleteCategory($where: CategoryWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation DeleteCategory($where: CategoryWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   deleteCategory(where: $where) {
     ...category
     postsCount(where: $postsCountWhere)
@@ -1155,17 +1577,36 @@ export const DeleteCategoryDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${CategoryFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${UserFragmentDoc}`;
 
 export function useDeleteCategoryMutation() {
   return Urql.useMutation<DeleteCategoryMutation, DeleteCategoryMutationVariables>(DeleteCategoryDocument);
 };
 export const CreateOnePostDocument = gql`
-    mutation CreateOnePost($input: PostCreate!, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    mutation CreateOnePost($input: PostCreate!, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   createOnePost(input: $input) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -1177,6 +1618,15 @@ export const CreateOnePostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -1185,6 +1635,15 @@ export const CreateOnePostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -1196,7 +1655,7 @@ export function useCreateOnePostMutation() {
   return Urql.useMutation<CreateOnePostMutation, CreateOnePostMutationVariables>(CreateOnePostDocument);
 };
 export const CreateManyPostDocument = gql`
-    mutation CreateManyPost($input: [PostCreate!]!, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    mutation CreateManyPost($input: [PostCreate!]!, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   createManyPost(input: $input) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -1208,6 +1667,15 @@ export const CreateManyPostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -1216,6 +1684,15 @@ export const CreateManyPostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -1227,7 +1704,7 @@ export function useCreateManyPostMutation() {
   return Urql.useMutation<CreateManyPostMutation, CreateManyPostMutationVariables>(CreateManyPostDocument);
 };
 export const UpdatePostDocument = gql`
-    mutation UpdatePost($input: PostUpdate!, $where: PostWhere, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    mutation UpdatePost($input: PostUpdate!, $where: PostWhere, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   updatePost(input: $input, where: $where) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -1239,6 +1716,15 @@ export const UpdatePostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -1247,6 +1733,15 @@ export const UpdatePostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -1258,7 +1753,7 @@ export function useUpdatePostMutation() {
   return Urql.useMutation<UpdatePostMutation, UpdatePostMutationVariables>(UpdatePostDocument);
 };
 export const DeletePostDocument = gql`
-    mutation DeletePost($where: PostWhere, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
+    mutation DeletePost($where: PostWhere, $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!], $postsCountWhere2: PostWhere, $postsOffset2: Int, $postsLimit2: Int, $postsWhere2: PostWhere, $postsOrderBy2: [PostOrderBy!]) {
   deletePost(where: $where) {
     ...post
     authorCount(where: $authorCountWhere)
@@ -1270,6 +1765,15 @@ export const DeletePostDocument = gql`
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(where: $postsCountWhere)
+      posts(
+        offset: $postsOffset
+        limit: $postsLimit
+        where: $postsWhere
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset
@@ -1278,6 +1782,15 @@ export const DeletePostDocument = gql`
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(where: $postsCountWhere2)
+      posts(
+        offset: $postsOffset2
+        limit: $postsLimit2
+        where: $postsWhere2
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -1289,7 +1802,7 @@ export function useDeletePostMutation() {
   return Urql.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument);
 };
 export const CreateOneUserDocument = gql`
-    mutation CreateOneUser($input: UserCreate!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation CreateOneUser($input: UserCreate!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   createOneUser(input: $input) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1300,17 +1813,36 @@ export const CreateOneUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useCreateOneUserMutation() {
   return Urql.useMutation<CreateOneUserMutation, CreateOneUserMutationVariables>(CreateOneUserDocument);
 };
 export const CreateManyUserDocument = gql`
-    mutation CreateManyUser($input: [UserCreate!]!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation CreateManyUser($input: [UserCreate!]!, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   createManyUser(input: $input) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1321,17 +1853,36 @@ export const CreateManyUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useCreateManyUserMutation() {
   return Urql.useMutation<CreateManyUserMutation, CreateManyUserMutationVariables>(CreateManyUserDocument);
 };
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($input: UserUpdate!, $where: UserWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation UpdateUser($input: UserUpdate!, $where: UserWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   updateUser(input: $input, where: $where) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1342,17 +1893,36 @@ export const UpdateUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useUpdateUserMutation() {
   return Urql.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument);
 };
 export const DeleteUserDocument = gql`
-    mutation DeleteUser($where: UserWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!]) {
+    mutation DeleteUser($where: UserWhere, $postsCountWhere: PostWhere, $postsOffset: Int, $postsLimit: Int, $postsWhere: PostWhere, $postsOrderBy: [PostOrderBy!], $authorCountWhere: UserWhere, $categoriesCountWhere: CategoryWhere, $authorOffset: Int, $authorLimit: Int, $authorWhere: UserWhere, $authorOrderBy: [UserOrderBy!], $categoriesOffset: Int, $categoriesLimit: Int, $categoriesWhere: CategoryWhere, $categoriesOrderBy: [CategoryOrderBy!]) {
   deleteUser(where: $where) {
     ...user
     postsCount(where: $postsCountWhere)
@@ -1363,11 +1933,30 @@ export const DeleteUserDocument = gql`
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(where: $authorCountWhere)
+      categoriesCount(where: $categoriesCountWhere)
+      author(
+        offset: $authorOffset
+        limit: $authorLimit
+        where: $authorWhere
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset
+        limit: $categoriesLimit
+        where: $categoriesWhere
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
     ${UserFragmentDoc}
-${PostFragmentDoc}`;
+${PostFragmentDoc}
+${CategoryFragmentDoc}`;
 
 export function useDeleteUserMutation() {
   return Urql.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument);

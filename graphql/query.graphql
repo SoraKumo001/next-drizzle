@@ -30,7 +30,17 @@ query Me(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   me {
     ...user
@@ -44,6 +54,28 @@ query Me(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -57,7 +89,17 @@ query FindManyCategory(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   findManyCategory(
     offset: $offset,
@@ -76,6 +118,28 @@ query FindManyCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -88,7 +152,17 @@ query FindFirstCategory(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   findFirstCategory(
     offset: $offset,
@@ -106,6 +180,28 @@ query FindFirstCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -131,10 +227,20 @@ query FindManyPost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   findManyPost(
     offset: $offset,
@@ -156,6 +262,17 @@ query FindManyPost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -164,6 +281,17 @@ query FindManyPost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -178,10 +306,20 @@ query FindFirstPost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   findFirstPost(
     offset: $offset,
@@ -202,6 +340,17 @@ query FindFirstPost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -210,6 +359,17 @@ query FindFirstPost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -233,7 +393,17 @@ query FindManyUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   findManyUser(
     offset: $offset,
@@ -252,6 +422,28 @@ query FindManyUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -264,7 +456,17 @@ query FindFirstUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   findFirstUser(
     offset: $offset,
@@ -282,6 +484,28 @@ query FindFirstUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -302,7 +526,17 @@ mutation SignIn(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   signIn(
     email: $email
@@ -318,6 +552,28 @@ mutation SignIn(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -326,13 +582,27 @@ mutation SignOut {
   signOut
 }
 
+mutation Seeds {
+  seeds
+}
+
 mutation CreateOneCategory(
   $input: CategoryCreate!,
   $postsCountWhere: PostWhere,
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   createOneCategory(
     input: $input
@@ -348,6 +618,28 @@ mutation CreateOneCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -358,7 +650,17 @@ mutation CreateManyCategory(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   createManyCategory(
     input: $input
@@ -374,6 +676,28 @@ mutation CreateManyCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -385,7 +709,17 @@ mutation UpdateCategory(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   updateCategory(
     input: $input,
@@ -402,6 +736,28 @@ mutation UpdateCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -412,7 +768,17 @@ mutation DeleteCategory(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   deleteCategory(
     where: $where
@@ -428,6 +794,28 @@ mutation DeleteCategory(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -440,10 +828,20 @@ mutation CreateOnePost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   createOnePost(
     input: $input
@@ -462,6 +860,17 @@ mutation CreateOnePost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -470,6 +879,17 @@ mutation CreateOnePost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -482,10 +902,20 @@ mutation CreateManyPost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   createManyPost(
     input: $input
@@ -504,6 +934,17 @@ mutation CreateManyPost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -512,6 +953,17 @@ mutation CreateManyPost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -525,10 +977,20 @@ mutation UpdatePost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   updatePost(
     input: $input,
@@ -548,6 +1010,17 @@ mutation UpdatePost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -556,6 +1029,17 @@ mutation UpdatePost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -568,10 +1052,20 @@ mutation DeletePost(
   $authorLimit: Int,
   $authorWhere: UserWhere,
   $authorOrderBy: [UserOrderBy!],
+  $postsCountWhere: PostWhere,
+  $postsOffset: Int,
+  $postsLimit: Int,
+  $postsWhere: PostWhere,
+  $postsOrderBy: [PostOrderBy!],
   $categoriesOffset: Int,
   $categoriesLimit: Int,
   $categoriesWhere: CategoryWhere,
-  $categoriesOrderBy: [CategoryOrderBy!]
+  $categoriesOrderBy: [CategoryOrderBy!],
+  $postsCountWhere2: PostWhere,
+  $postsOffset2: Int,
+  $postsLimit2: Int,
+  $postsWhere2: PostWhere,
+  $postsOrderBy2: [PostOrderBy!]
 ) {
   deletePost(
     where: $where
@@ -590,6 +1084,17 @@ mutation DeletePost(
       orderBy: $authorOrderBy
     ) {
       ...user
+      postsCount(
+        where: $postsCountWhere
+      )
+      posts(
+        offset: $postsOffset,
+        limit: $postsLimit,
+        where: $postsWhere,
+        orderBy: $postsOrderBy
+      ) {
+        ...post
+      }
     }
     categories(
       offset: $categoriesOffset,
@@ -598,6 +1103,17 @@ mutation DeletePost(
       orderBy: $categoriesOrderBy
     ) {
       ...category
+      postsCount(
+        where: $postsCountWhere2
+      )
+      posts(
+        offset: $postsOffset2,
+        limit: $postsLimit2,
+        where: $postsWhere2,
+        orderBy: $postsOrderBy2
+      ) {
+        ...post
+      }
     }
   }
 }
@@ -608,7 +1124,17 @@ mutation CreateOneUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   createOneUser(
     input: $input
@@ -624,6 +1150,28 @@ mutation CreateOneUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -634,7 +1182,17 @@ mutation CreateManyUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   createManyUser(
     input: $input
@@ -650,6 +1208,28 @@ mutation CreateManyUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -661,7 +1241,17 @@ mutation UpdateUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   updateUser(
     input: $input,
@@ -678,6 +1268,28 @@ mutation UpdateUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
@@ -688,7 +1300,17 @@ mutation DeleteUser(
   $postsOffset: Int,
   $postsLimit: Int,
   $postsWhere: PostWhere,
-  $postsOrderBy: [PostOrderBy!]
+  $postsOrderBy: [PostOrderBy!],
+  $authorCountWhere: UserWhere,
+  $categoriesCountWhere: CategoryWhere,
+  $authorOffset: Int,
+  $authorLimit: Int,
+  $authorWhere: UserWhere,
+  $authorOrderBy: [UserOrderBy!],
+  $categoriesOffset: Int,
+  $categoriesLimit: Int,
+  $categoriesWhere: CategoryWhere,
+  $categoriesOrderBy: [CategoryOrderBy!]
 ) {
   deleteUser(
     where: $where
@@ -704,6 +1326,29 @@ mutation DeleteUser(
       orderBy: $postsOrderBy
     ) {
       ...post
+      authorCount(
+        where: $authorCountWhere
+      )
+      categoriesCount(
+        where: $categoriesCountWhere
+      )
+      author(
+        offset: $authorOffset,
+        limit: $authorLimit,
+        where: $authorWhere,
+        orderBy: $authorOrderBy
+      ) {
+        ...user
+      }
+      categories(
+        offset: $categoriesOffset,
+        limit: $categoriesLimit,
+        where: $categoriesWhere,
+        orderBy: $categoriesOrderBy
+      ) {
+        ...category
+      }
     }
   }
 }
+

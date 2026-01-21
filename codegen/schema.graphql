@@ -291,6 +291,7 @@ type Query {
 type Mutation {
   signIn(email: String): User
   signOut: Boolean
+  seeds: Boolean
   createOneCategory(input: CategoryCreate!): Category!
   createManyCategory(input: [CategoryCreate!]!): [Category!]!
   updateCategory(input: CategoryUpdate!, where: CategoryWhere): [Category!]!
