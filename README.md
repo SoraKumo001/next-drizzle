@@ -2,11 +2,12 @@
 
 Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
-このプロジェクトは、Drizzle ORM で定義したデータベース構造を、最小限のコード記述で GraphQL 化し、Next.js から SSR（Server-Side Rendering）対応で呼び出すアーキテクチャを採用しています。
+このプロジェクトは、Drizzle ORM で定義したデータベース構造を自動で GraphQL 化し、対応した Hooks の出力まで行います。また、Next.js から SSR 側とブラウザ側のデータ取得コードは共通の Hook で行われるので、別々にデータ取得ロジックを書く必要がありません。
 
 **主な特徴:**
 
-- **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化されます。
+- **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化され、GraphQL の API に変換されます。
+- **Hook の作成まで自動化** Drizzle で定義した DB のスキーマは、GraphQL スキーマへの変換後、さらに各操作に対応した Hook の作成まで自動で行ないます。
 - **データ取得の一元化:** SSR 時のデータ取得を Client Component 上から行う構成により、サーバーとブラウザでデータ取得ロジックを統一できます。
 
 ---
@@ -121,7 +122,7 @@ graph TD
 
 - Node.js (v18+)
 - pnpm（推奨）, npm, または yarn
-- Docker（データベース用）
+- Docker（ローカル開発用データベース）
 
 ### 手順
 
@@ -160,17 +161,20 @@ graph TD
 
 開発や運用で使用する主要なコマンドです。
 
-| コマンド           | 説明                                                        |
-| :----------------- | :---------------------------------------------------------- |
-| `dev`              | Next.js 開発サーバーを起動します。                          |
-| `docker`           | PostgreSQL コンテナを起動します。                           |
-| `graphql:codegen`  | GraphQL の変更を監視し、TypeScript の型を生成します。       |
-| `graphql:schema`   | GraphQL スキーマをエクスポートします。                      |
-| `drizzle:generate` | スキーマ変更に基づいて SQL マイグレーションを生成します。   |
-| `drizzle:migrate`  | マイグレーションをデータベースに適用します。                |
-| `drizzle:seed`     | テストデータをデータベースにシードします。                  |
-| `drizzle:reset`    | データベースをリセットします（マイグレーション + シード）。 |
-| `lint`             | ESLint を実行します。                                       |
+| コマンド                     | 説明                                                        |
+| :--------------------------- | :---------------------------------------------------------- |
+| `dev`                        | Next.js 開発サーバーを起動します。                          |
+| `docker`                     | PostgreSQL コンテナを起動します。                           |
+| `build`                      | 本番用にアプリケーションをビルドします。                    |
+| `start`                      | 本番サーバーを起動します。                                  |
+| `drizzle:generate`           | スキーマ変更に基づいて SQL マイグレーションを生成します。   |
+| `drizzle:migrate`            | 開発環境のデータベースにマイグレーションを適用します。      |
+| `drizzle:migrate:production` | 本番環境のデータベースにマイグレーションを適用します。      |
+| `drizzle:seed`               | テストデータをデータベースにシードします。                  |
+| `drizzle:reset`              | データベースをリセットします（マイグレーション + シード）。 |
+| `lint`                       | ESLint を実行します。                                       |
+| `graphql:schema`             | GraphQL スキーマをエクスポートします。                      |
+| `graphql:codegen`            | GraphQL の変更を監視し、TypeScript の型を生成します。       |
 
 ---
 
@@ -214,6 +218,8 @@ erDiagram
 
 [Pothos](https://pothos-graphql.dev/) と Drizzle プラグインを組み合わせることで、DB スキーマから GraphQL スキーマを自動生成します。
 
+自動生成はカスタマイズが可能であり、サンプルの例では以下の機能が提供されます。
+
 - **自動化:** `drizzle-orm` の定義を読み取り、Query/Mutation を即座に作成。
 - **セキュリティ (RLS):**
   - `executable`: 認証済みユーザーのみ Mutation を許可。
@@ -224,30 +230,13 @@ erDiagram
 import SchemaBuilder from "@pothos/core";
 import DrizzlePlugin from "@pothos/plugin-drizzle";
 import { getTableConfig } from "drizzle-orm/pg-core";
-import { GraphQLSchema } from "graphql";
-import { setCookie } from "hono/cookie";
-import { SignJWT } from "jose";
 import PothosDrizzleGeneratorPlugin, {
   isOperation,
 } from "pothos-drizzle-generator";
 import { relations } from "../db/relations";
 import type { Context } from "./context";
 import type { Context as HonoContext } from "hono";
-import { getEnvVariable } from "../libs/getEnvVariable";
-import { db } from "./drizzle";
-
-// Secret key for JWT token signing and verification
-const SECRET = getEnvVariable("SECRET");
-
-// JWT token expiration time: 400 days in seconds
-const TOKEN_MAX_AGE = 60 * 60 * 24 * 400;
-
-// Cookie configuration shared across authentication operations
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  sameSite: "strict" as const,
-  path: "/",
-};
+import { db } from "../db";
 
 // Tables to exclude from GraphQL schema generation
 // Junction tables like "postsToCategories" are typically excluded
@@ -263,7 +252,7 @@ export interface PothosTypes {
  * - DrizzlePlugin: Integrates Drizzle ORM with Pothos
  * - PothosDrizzleGeneratorPlugin: Automatically generates GraphQL schema from Drizzle schema
  */
-const builder = new SchemaBuilder<PothosTypes>({
+export const builder = new SchemaBuilder<PothosTypes>({
   plugins: [DrizzlePlugin, PothosDrizzleGeneratorPlugin],
   drizzle: {
     client: () => db,
@@ -319,6 +308,36 @@ const builder = new SchemaBuilder<PothosTypes>({
     },
   },
 });
+```
+
+#### 3. オペレーションの追加 (`src/server/operations.ts`)
+
+自動生成された CRUD 操作以外に、認証（ログイン・ログアウト）やデータシードなどのカスタム操作を追加しています。
+
+```ts
+import { builder } from "./builder";
+import { setCookie } from "hono/cookie";
+import { SignJWT } from "jose";
+import { getEnvVariable } from "../libs/getEnvVariable";
+import { db } from "../db";
+import type { GraphQLSchema } from "graphql";
+import { isTable, sql } from "drizzle-orm";
+import { getTableConfig, type PgTable } from "drizzle-orm/pg-core";
+import { seed } from "drizzle-seed";
+import * as dbSchema from "../db/schema";
+
+// Secret key for JWT token signing and verification
+const SECRET = getEnvVariable("SECRET");
+
+// JWT token expiration time: 400 days in seconds
+const TOKEN_MAX_AGE = 60 * 60 * 24 * 400;
+
+// Cookie configuration shared across authentication operations
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: "strict" as const,
+  path: "/",
+};
 
 builder.queryType({
   fields: (t) => ({
@@ -367,11 +386,30 @@ builder.mutationType({
     }),
     // Signs out the current user by clearing the authentication cookie
     signOut: t.field({
-      args: {},
       type: "Boolean",
       nullable: true,
       resolve: async (_root, _args, ctx) => {
         setCookie(ctx, "auth-token", "", { ...COOKIE_OPTIONS, maxAge: 0 });
+        return true;
+      },
+    }),
+    // Create seeds
+    seeds: t.field({
+      type: "Boolean",
+      nullable: true,
+      resolve: async () => {
+        await db.transaction(async (tx) => {
+          // drizzle-seedのresetはスキーマ名が巻き込まれるため、相当のものを独自に実装
+          await db.execute(
+            sql.raw(
+              `truncate ${Object.values(dbSchema)
+                .filter((t) => isTable(t))
+                .map((t) => `"${getTableConfig(t as PgTable).name}"`)
+                .join(",")} cascade;`
+            )
+          );
+          await seed(tx, dbSchema);
+        });
         return true;
       },
     }),
@@ -381,7 +419,7 @@ builder.mutationType({
 export const schema: GraphQLSchema = builder.toSchema({ sortSchema: false });
 ```
 
-#### 3. Hono によるサーバー構築 (`src/server/hono.ts`)
+#### 4. Hono によるサーバー構築 (`src/server/hono.ts`)
 
 GraphQL サーバーの実体には、軽量・高速な [Hono](https://hono.dev/) を使用しています。
 
@@ -486,7 +524,7 @@ app.post("*", authMiddleware, (c, next) => {
 });
 ```
 
-#### 4. Next.js Route Handler への統合 (`src/app/api/graphql/route.ts`)
+#### 5. Next.js Route Handler への統合 (`src/app/api/graphql/route.ts`)
 
 Web Standard API に準拠した Hono サーバーを、Next.js Route Handler としてマウントします。
 
@@ -503,7 +541,7 @@ export async function GET(request: Request) {
 }
 ```
 
-#### 5. クライアント用クエリの自動生成 (`graphql-auto-query`)
+#### 6. クライアント用クエリの自動生成 (`graphql-auto-query`)
 
 このプロジェクトでは、`graphql-auto-query` を使用して、GraphQL スキーマからクライアントサイドで使用するクエリ（オペレーション）を自動生成しています。これにより、手動でのクエリ記述の手間を省き、開発効率を向上させています。
 
