@@ -6,7 +6,11 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
 このプロジェクトは、Drizzle ORM で定義したデータベース構造を自動で GraphQL 化し、対応した Hooks の出力まで行います。また、Next.js から SSR 側とブラウザ側のデータ取得コードは共通の Hook で行われるので、別々にデータ取得ロジックを書く必要がありません。
 
-** 変換の流れ **
+**主な特徴 (Technical Highlights):**
+
+- **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化され、GraphQL の API に変換されます。
+- **Hook の作成まで自動化:** Drizzle で定義した DB のスキーマは、GraphQL スキーマへの変換後、さらに各操作に対応した Hook の作成まで自動で行ないます。
+- **データ取得の一元化:** SSR 時のデータ取得を Client Component 上から行う構成により、サーバーとブラウザでデータ取得ロジックを統一できます。
 
 ```mermaid
 graph LR
@@ -16,26 +20,21 @@ graph LR
     D -->|"@graphql-codegen/cli"| E["React Hooks (Urql)"]
 ```
 
-**主な特徴:**
-
-- **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化され、GraphQL の API に変換されます。
-- **Hook の作成まで自動化** Drizzle で定義した DB のスキーマは、GraphQL スキーマへの変換後、さらに各操作に対応した Hook の作成まで自動で行ないます。
-- **データ取得の一元化:** SSR 時のデータ取得を Client Component 上から行う構成により、サーバーとブラウザでデータ取得ロジックを統一できます。
-
 ---
 
 ## 目次
 
-1.  [はじめに](#はじめに)
-    - [プロジェクト構成](#プロジェクト構成)
-    - [機能](#機能)
+1.  [プロジェクト概要](#プロジェクト概要)
+    - [動作サンプル & リポジトリ](#動作サンプル--リポジトリ)
+    - [アプリケーション機能](#アプリケーション機能)
     - [技術スタック](#技術スタック)
     - [アーキテクチャ概要](#アーキテクチャ概要)
 2.  [インストールとセットアップ](#インストールとセットアップ)
     - [前提条件](#前提条件)
     - [手順](#手順)
 3.  [スクリプト一覧](#スクリプト一覧)
-4.  [アーキテクチャと実装詳細](#アーキテクチャと実装詳細)
+4.  [プロジェクト構成](#プロジェクト構成)
+5.  [アーキテクチャと実装詳細](#アーキテクチャと実装詳細)
     - [GraphQL サーバーとスキーマ設計](#graphql-サーバーとスキーマ設計)
     - [認証と認可のフロー](#認証と認可のフロー)
     - [フロントエンド統合（状態管理とフック）](#フロントエンド統合状態管理とフック)
@@ -43,33 +42,14 @@ graph LR
 
 ---
 
-## はじめに
+## プロジェクト概要
 
-### 動作サンプル
+### 動作サンプル & リポジトリ
 
-https://next-drizzle-one.vercel.app/
+- **動作サンプル**: [https://next-drizzle-one.vercel.app/](https://next-drizzle-one.vercel.app/)
+- **リポジトリ**: [https://github.com/SoraKumo001/next-drizzle](https://github.com/SoraKumo001/next-drizzle)
 
-### リポジトリ
-
-https://github.com/SoraKumo001/next-drizzle
-
-### プロジェクト構成
-
-このプロジェクトの主要なディレクトリ構成は以下の通りです。
-
-- **`src/`**: アプリケーションのソースコード
-  - **`app/`**: Next.js App Router ページと API ルート
-  - **`components/`**: 共有 UI コンポーネント（StoreProvider など）
-  - **`db/`**: Drizzle スキーマとリレーション定義
-  - **`generated/`**: 生成された GraphQL 型とフック
-  - **`hooks/`**: カスタム React フック
-  - **`libs/`**: ユーティリティライブラリ
-  - **`server/`**: GraphQL サーバーロジックとスキーマビルダー
-- **`codegen/`**: GraphQL Code Generator 設定
-- **`drizzle/`**: データベースマイグレーションファイル
-- **`tools/`**: シーディングと管理用スクリプト
-
-### 機能
+### アプリケーション機能
 
 - **投稿管理:**
   - 投稿リストの表示（ホームページ）
@@ -101,29 +81,43 @@ https://github.com/SoraKumo001/next-drizzle
 ### アーキテクチャ概要
 
 ```mermaid
-graph TD
-    Client[Client Browser]
-
-    subgraph NextJS ["Next.js (App Router)"]
-        Layout["Layout / Pages (RSC)"]
+graph BT
+    subgraph NextJS ["Front Server(Next.js)"]
+        Layout["Layout (Server Component)"]
+        Pages["Pages (Client Component)"]
         Urql[Urql Client]
-        Route["API Route /api/graphql"]
+        Route["/api/graphql"]
     end
 
-    subgraph ServerLogic ["Server Logic"]
-        Hono[Hono Server]
+    subgraph ServerLogic ["Backend Server(Next.js)"]
+        Hono["Hono Server
+        (GraphQL Server)"]
+        GraphQL(GraphQL Schema)
         Pothos[Pothos Schema Builder]
+        Drizzle[Drizzle]
+        DrizzleSchema[Drizzle Schema]
     end
 
-    DB[("PostgreSQL / Drizzle")]
+    subgraph Client[Client Browser]
+        ClientPages["Pages (Client Component)"]
+        ClientUrql[Urql Client]
+    end
 
-    Client -->|Interaction| Urql
+    DB[("PostgreSQL")]
+
     Client -->|Request| Layout
-    Layout -->|SSR Data Fetch| Urql
-    Urql -->|GraphQL Query| Route
+    Layout -->|Passes Encrypted Toke| Pages
+    Pages -->|GraphQL Query| Urql
+    Urql -->|Fetch| Route
     Route -->|Handle Request| Hono
-    Hono -->|Define Schema| Pothos
-    Hono -->|Query/Mutation| DB
+    Pothos --> |Define Schema|GraphQL
+    GraphQL --> Hono
+    Hono -->|Drizzle API| Drizzle
+    Drizzle -->|DB Query| DB
+    ClientPages -->|GraphQL Query| ClientUrql
+    ClientUrql -->|Fetch| Route
+    DrizzleSchema --> Pothos
+    DrizzleSchema --> Drizzle
 ```
 
 ---
@@ -187,6 +181,24 @@ graph TD
 | `lint`                       | ESLint を実行します。                                       |
 | `graphql:schema`             | GraphQL スキーマをエクスポートします。                      |
 | `graphql:codegen`            | GraphQL の変更を監視し、TypeScript の型を生成します。       |
+
+---
+
+## プロジェクト構成
+
+このプロジェクトの主要なディレクトリ構成は以下の通りです。
+
+- **`src/`**: アプリケーションのソースコード
+  - **`app/`**: Next.js App Router ページと API ルート
+  - **`components/`**: 共有 UI コンポーネント（StoreProvider など）
+  - **`db/`**: Drizzle スキーマとリレーション定義
+  - **`generated/`**: 生成された GraphQL 型とフック
+  - **`hooks/`**: カスタム React フック
+  - **`libs/`**: ユーティリティライブラリ
+  - **`server/`**: GraphQL サーバーロジックとスキーマビルダー
+- **`codegen/`**: GraphQL Code Generator 設定
+- **`drizzle/`**: データベースマイグレーションファイル
+- **`tools/`**: シーディングと管理用スクリプト
 
 ---
 
