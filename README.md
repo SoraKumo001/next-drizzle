@@ -82,42 +82,51 @@ graph LR
 
 ```mermaid
 graph BT
-    subgraph NextJS ["Front Server(Next.js)"]
-        Layout["Layout (Server Component)"]
-        Pages["Pages (Client Component)"]
-        Urql[Urql Client]
-        Route["/api/graphql"]
-    end
-
-    subgraph ServerLogic ["Backend Server(Next.js)"]
-        Hono["Hono Server
-        (GraphQL Server)"]
-        GraphQL(GraphQL Schema)
-        Pothos[Pothos Schema Builder]
-        Drizzle[Drizzle]
-        DrizzleSchema[Drizzle Schema]
-    end
-
-    subgraph Client[Client Browser]
-        ClientPages["Pages (Client Component)"]
-        ClientUrql[Urql Client]
-    end
-
     DB[("PostgreSQL")]
 
-    Client -->|Request| Layout
-    Layout -->|Passes Encrypted Toke| Pages
-    Pages -->|GraphQL Query| Urql
-    Urql -->|Fetch| Route
-    Route -->|Handle Request| Hono
-    Pothos --> |Define Schema|GraphQL
-    GraphQL --> Hono
-    Hono -->|Drizzle API| Drizzle
-    Drizzle -->|DB Query| DB
-    ClientPages -->|GraphQL Query| ClientUrql
-    ClientUrql -->|Fetch| Route
-    DrizzleSchema --> Pothos
+    subgraph ServerLogic ["Backend Server (Next.js)"]
+        DrizzleSchema[Drizzle Schema]
+        Drizzle[Drizzle ORM]
+        Pothos[Pothos Schema Builder]
+        GraphQL(GraphQL Schema)
+        Hono["Hono Server
+        (GraphQL Server)"]
+    end
+
+    subgraph NextJS ["Front Server (Next.js)"]
+        Route["API Route
+        /api/graphql"]
+        Urql[Urql Client]
+        Pages["Pages
+        (Client Component)"]
+        Layout["Layout
+        (Server Component)"]
+    end
+
+    subgraph Client ["Client Browser"]
+        ClientUrql[Urql Client]
+        ClientPages["Pages
+        (Client Component)"]
+    end
+
     DrizzleSchema --> Drizzle
+    DrizzleSchema --> Pothos
+    Pothos -->|Define Schema| GraphQL
+    GraphQL --> Hono
+
+    Drizzle -->|DB Query| DB
+    Hono -->|Drizzle API| Drizzle
+    Route -->|Handle Request| Hono
+
+    Urql -->|Fetch| Route
+    Pages -->|GraphQL Query| Urql
+    Layout -->|Passes Encrypted Token| Pages
+
+    ClientUrql -->|Fetch| Route
+    ClientPages -->|GraphQL Query| ClientUrql
+
+    Client --> |"First HTML
+    (Cookie token)"|Layout
 ```
 
 ---
