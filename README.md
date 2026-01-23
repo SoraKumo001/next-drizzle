@@ -6,6 +6,16 @@ Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
 このプロジェクトは、Drizzle ORM で定義したデータベース構造を自動で GraphQL 化し、対応した Hooks の出力まで行います。また、Next.js から SSR 側とブラウザ側のデータ取得コードは共通の Hook で行われるので、別々にデータ取得ロジックを書く必要がありません。
 
+** 変換の流れ **
+
+```mermaid
+graph LR
+    A[Drizzle Schema] -->|"Pothos + pothos-drizzle-generator"| B[GraphQL Schema]
+    B -->|"Hono + @hono/graphql-server"| C[GraphQL API]
+    B -->|"graphql-auto-query"| D[GraphQL Operation File]
+    D -->|"@graphql-codegen/cli"| E["React Hooks (Urql)"]
+```
+
 **主な特徴:**
 
 - **N+1 問題の解消:** リレーションを伴うクエリは Drizzle ORM によって最適化され、GraphQL の API に変換されます。
