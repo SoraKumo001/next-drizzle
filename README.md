@@ -80,9 +80,14 @@ graph LR
 
 ### アーキテクチャ概要
 
+Next.js がフロントとバックエンドサーバーを兼ねていますが、GraphQL を使うことでフロントと DB とやり取りするバックエンド部分は分離されています。また、FirstHTML 出力後は、ServerAction を使用せず、 Urql から GraphQL のキャッシュを利用した Fetch を使用します。
+
 ```mermaid
 graph BT
-    DB[("PostgreSQL")]
+
+    subgraph DATABASE ["Database"]
+      DB[("PostgreSQL")]
+    end
 
     subgraph ServerLogic ["Backend Server (Next.js)"]
         DrizzleSchema[Drizzle Schema]
@@ -125,7 +130,7 @@ graph BT
     ClientUrql -->|Fetch| Route
     ClientPages -->|GraphQL Query| ClientUrql
 
-    Client --> |"First HTML
+    Client --> |"SSR First HTML
     (Cookie token)"|Layout
 ```
 
