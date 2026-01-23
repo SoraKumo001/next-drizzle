@@ -1,5 +1,7 @@
 # Next-Drizzle
 
+![](./document/manga.png)
+
 Next.js、Drizzle ORM、GraphQL で構築された実装サンプルです。
 
 このプロジェクトは、Drizzle ORM で定義したデータベース構造を自動で GraphQL 化し、対応した Hooks の出力まで行います。また、Next.js から SSR 側とブラウザ側のデータ取得コードは共通の Hook で行われるので、別々にデータ取得ロジックを書く必要がありません。
