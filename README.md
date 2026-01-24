@@ -39,6 +39,7 @@ graph LR
     - [認証と認可のフロー](#認証と認可のフロー)
     - [フロントエンド統合（状態管理とフック）](#フロントエンド統合状態管理とフック)
     - [データフェッチと SSR の統合](#データフェッチと-ssr-の統合)
+6.  [まとめ](#まとめ)
 
 ---
 
@@ -673,50 +674,107 @@ import { useSignIn } from "@/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+const context = { additionalTypenames: ["User"] };
+
 export default function Users() {
-  const [{ data, fetching, error }, executeQuery] = useFindManyUserQuery();
+  const [{ data, fetching, error }, executeQuery] = useFindManyUserQuery({
+    context,
+  });
   const signIn = useSignIn();
   const router = useRouter();
 
-  if (fetching) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
-    <div className="p-4">
-      <Link href="/" className="text-blue-500 hover:underline mb-4 block">
-        &larr; Back to Home
-      </Link>
-      <h1 className="text-2xl font-bold mb-4">Users</h1>
-      <div className="grid gap-4">
-        {data?.findManyUser?.map((user) => (
-          <div
-            key={user.id}
-            className="border p-4 rounded shadow flex justify-between items-center"
+    <>
+      <title>Users</title>
+      <div className="container mx-auto p-4 max-w-5xl">
+        <Link href="/" className="btn btn-link no-underline pl-0 mb-4">
+          &larr; Back to Home
+        </Link>
+
+        <div className="flex items-center gap-3 mb-8">
+          <h1 className="text-3xl font-bold">Users</h1>
+          <button
+            className={`btn btn-circle btn-ghost btn-sm ${
+              fetching ? "animate-spin" : ""
+            }`}
+            onClick={() => executeQuery({ requestPolicy: "network-only" })}
+            title="Refresh"
+            disabled={fetching}
           >
-            <div className="flex gap-2 items-center">
-              <div>
-                <div className="font-bold">{user.name}</div>
-                <div className="text-gray-500">{user.email}</div>
-              </div>
-              {user.postsCount !== undefined && (
-                <div className="badge badge-secondary">
-                  {user.postsCount} posts
-                </div>
-              )}
-            </div>
-            <button
-              onClick={async () => {
-                await signIn(user.email);
-                router.push("/");
-              }}
-              className="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Sign In
-            </button>
+            {fetching ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <span className="material-symbols-outlined">refresh</span>
+            )}
+          </button>
+        </div>
+
+        {error ? (
+          <div className="alert alert-error my-4">
+            <span className="material-symbols-outlined">error</span>
+            <span>Error: {error.message}</span>
           </div>
-        ))}
+        ) : fetching && !data ? (
+          <div className="flex justify-center items-center py-20">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data?.findManyUser?.map((user) => (
+              <div
+                key={user.id}
+                className="card bg-base-100 shadow-sm border border-base-200 hover:shadow-md hover:border-base-300 transition-all"
+              >
+                <div className="card-body flex flex-row items-center gap-4">
+                  <div className="avatar placeholder">
+                    <div className="bg-neutral text-neutral-content rounded-full w-12 h-12 flex items-center justify-center">
+                      <span className="text-xl font-bold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h2
+                        className="card-title text-lg truncate"
+                        title={user.name}
+                      >
+                        {user.name}
+                      </h2>
+                      {user.postsCount !== undefined && (
+                        <div className="badge badge-secondary badge-sm">
+                          {user.postsCount} posts
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-base-content/70 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+                <div className="card-actions justify-end p-4 pt-0">
+                  <button
+                    onClick={async () => {
+                      await signIn(user.email);
+                      router.push("/");
+                    }}
+                    className="btn btn-primary btn-sm"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!fetching && !error && data?.findManyUser?.length === 0 && (
+          <div className="text-center py-10 text-base-content/50">
+            <p>No users found.</p>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 ```
@@ -731,71 +789,243 @@ Next.js App Router 上で、Client Component からのデータ取得を SSR 対
 2.  **ハイドレーション:** 収集したデータを HTML に埋め込み、クライアントでの再取得を回避。
 3.  **RSC 不要:** `use client` コンポーネントでも SEO や初期表示パフォーマンスを維持。
 
+Urql を利用するときは、ユーザーの切り替えなどでキャッシュをクリアできるようにしています。
+
+```tsx
+"use client";
+import {
+  NextSSRProvider,
+  useCreateNextSSRExchange,
+} from "@react-libraries/next-exchange-ssr";
+import { type RetryExchangeOptions, retryExchange } from "@urql/exchange-retry";
+import { type ReactNode, useCallback, useMemo } from "react";
+import { cacheExchange, Client, fetchExchange, Provider } from "urql";
+import { useUser } from "../hooks/useAuth";
+import { decrypt } from "../libs/encrypt";
+import { useDispatch, useSelector } from "./StoreProvider";
+
+const isServerSide = typeof window === "undefined";
+const endpoint = "/api/graphql";
+
+const options: RetryExchangeOptions = {
+  maxDelayMs: 3000,
+  randomDelay: false,
+};
+
+export const UrqlProvider = ({
+  children,
+  host,
+  token,
+}: {
+  children: ReactNode;
+  host?: string;
+  token?: string;
+}) => {
+  const session = useUser();
+  const nextSSRExchange = useCreateNextSSRExchange();
+  const cacheState = useUrqlCache();
+  const client = useMemo(() => {
+    return new Client({
+      url: `${host}${endpoint}`,
+      fetchOptions: {
+        headers: {
+          "apollo-require-preflight": "true",
+          cookie:
+            // SSR時にtokenをデコードして認証情報を渡す
+            isServerSide && token
+              ? `auth-token=${decrypt(token, process.env.secret ?? "")}`
+              : "",
+        },
+      },
+      suspense: isServerSide,
+      exchanges: [
+        cacheExchange,
+        nextSSRExchange,
+        retryExchange(options),
+        fetchExchange,
+      ],
+      preferGetMethod: false,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextSSRExchange, session, cacheState]);
+  return (
+    <Provider value={client}>
+      <NextSSRProvider>{children}</NextSSRProvider>
+    </Provider>
+  );
+};
+
+export const useUrqlCache = () => {
+  return useSelector((state: { urqlCache: object }) => state.urqlCache);
+};
+
+export const useClearUrqlCache = () => {
+  const dispatch = useDispatch<{ urqlCache: object }>();
+
+  return useCallback(() => {
+    dispatch((state) => ({
+      ...state,
+      urqlCache: {},
+    }));
+  }, [dispatch]);
+};
+```
+
+#### 認証 Token と GraphQL エンドポイントの設定
+
+`layout.tsx`は唯一の ServerComponent です。ここでアクセス時に発生したヘッダー情報を利用して Token の受け渡しや SSR 時に利用する GraphQL のエンドポイントの指定を行います。
+
+- **Token の受け渡し:** クライアントコンポーネントに暗号化された認証トークンを渡します。これは SSR 時にサーバー上で認証状態を保持するためだけに利用されます。ブラウザに引き渡された後は、直接ブラウザ内の Cookie を利用するため不要となります。
+- **GraphQL エンドポイントの指定:** SSR 時に利用する GraphQL のエンドポイントを `UrqlProvider` に渡します。
+
+```tsx
+import { Geist, Geist_Mono } from "next/font/google";
+import { UrqlProvider } from "../providers/UrqlProvider";
+import { StoreProvider } from "../providers/StoreProvider";
+import { cookies, headers } from "next/headers";
+import { jwtVerify } from "jose";
+import type { users } from "../db/schema";
+import { encrypt } from "../libs/encrypt";
+import { Header } from "../components/Header";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+async function getOrigin() {
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") || headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") || "http";
+  return `${protocol}://${host}`;
+}
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  // Get token from cookies
+  const token = await cookies().then((v) => v.get("auth-token")?.value);
+  // Get origin for GraphQL client
+  const host = await getOrigin();
+  // Verify user token
+  const user =
+    token &&
+    (await jwtVerify<{ payload: { user?: typeof users.$inferSelect } }>(
+      String(token),
+      new TextEncoder().encode(process.env.secret)
+    )
+      .then(({ payload: { user } }) => user as typeof users.$inferSelect)
+      .then(({ id, name }: typeof users.$inferSelect) => ({ id, name }))
+      .catch(() => undefined));
+
+  return (
+    <StoreProvider
+      initState={{
+        user,
+      }}
+    >
+      <UrqlProvider
+        host={host}
+        // Pass encrypted token to Client Component
+        token={token && encrypt(token, process.env.secret ?? "")}
+      >
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <div className="max-w-257 mx-auto">
+              <Header />
+              {children}
+            </div>
+          </body>
+        </html>
+      </UrqlProvider>
+    </StoreProvider>
+  );
+}
+```
+
 #### 実装例: 投稿一覧ページ
 
-Client Component ですが、初回アクセス時はサーバーサイドでデータ取得が行われ、完成された HTML が返されます。
+SSR 時も Client Component 上でデータ取得が行われ HTML が返されます。ServerComponent でデータを取得した場合と違い、そのままブラウザで動作するので、サーバーとブラウザで別コードを書く必要がありません。
 
 ```tsx
 "use client";
 import { useFindManyPostQuery, OrderBy } from "@/generated/graphql";
-import { useUser } from "@/hooks/useAuth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { PostCard } from "@/components/PostCard";
+
+const context = { additionalTypenames: ["Post"] };
 
 export default function Home() {
-  const user = useUser();
-  const router = useRouter();
-  const [{ data, error, fetching }] = useFindManyPostQuery({
+  const [{ data, error, fetching }, executeQuery] = useFindManyPostQuery({
     variables: { orderBy: [{ createdAt: OrderBy.Desc }] },
+    context,
   });
 
-  if (fetching) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
   return (
-    <div className="p-4 grid gap-4">
-      <Link href="/posts/new" className="btn btn-primary w-fit">
-        Create New Post
-      </Link>
-      <h1 className="text-2xl font-bold">Posts</h1>
-      {data?.findManyPost?.map((post) => (
-        <div
-          key={post.id}
-          onClick={() => router.push(`/posts/${post.id}`)}
-          className={`cursor-pointer card bg-base-100 shadow-xl ${
-            !post.published ? "bg-base-200" : ""
-          } ${user?.id === post.authorId ? "border-2 border-primary" : ""}`}
-        >
-          <div className="card-body">
-            <div className="flex justify-between items-start">
-              <h2 className="card-title">{post.title}</h2>
-              {user?.id === post.authorId && (
-                <Link
-                  href={`/posts/${post.id}/edit`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="btn btn-outline btn-primary btn-sm"
-                >
-                  Edit
-                </Link>
+    <>
+      <title>Home</title>
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold">Latest Posts</h1>
+            <button
+              className={`btn btn-circle btn-ghost btn-sm ${
+                fetching ? "animate-spin" : ""
+              }`}
+              onClick={() => executeQuery({ requestPolicy: "network-only" })}
+              title="Refresh"
+              disabled={fetching}
+            >
+              {fetching ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <span className="material-symbols-outlined">refresh</span>
               )}
-            </div>
-            <div className="text-sm text-base-content/70">
-              {post.author && <span>By {post.author.name} • </span>}
-              {new Date(post.createdAt).toLocaleString()}
-            </div>
-            <p className="mt-2">{post.content}</p>
-            {post.categories && post.categories.length > 0 && (
-              <div className="card-actions mt-2">
-                {post.categories.map((category) => (
-                  <div key={category.id} className="badge badge-outline">
-                    {category.name}
-                  </div>
-                ))}
-              </div>
-            )}
+            </button>
           </div>
+          <Link href="/posts/new" className="btn btn-primary">
+            Create New Post
+          </Link>
         </div>
-      ))}
-    </div>
+
+        {error ? (
+          <div className="alert alert-error my-4">
+            <span className="material-symbols-outlined">error</span>
+            <span>Error: {error.message}</span>
+          </div>
+        ) : fetching ? (
+          <div className="flex justify-center items-center py-20">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data?.findManyPost?.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
+
+        {!fetching && !error && data?.findManyPost?.length === 0 && (
+          <div className="text-center py-10 text-base-content/50">
+            <p>No posts found. Be the first to create one!</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 ```
+
+## まとめ
+
+Drizzle と GraphQL を統合することで、DB スキーマの定義から React Hooks の生成までをシームレスに自動化しました。これにより、開発者は API のボイラープレート作成から解放され、UI 実装に専念できます。また、Client Component を起点としたデータ取得戦略により、サーバー（SSR）とブラウザ（CSR）の環境差分を意識せず、単一のロジックで一貫したフェッチ処理を実現しています。このアプローチは、開発効率を大幅に向上させ、保守性の高いアプリケーション開発を強力に支援します。このプロジェクトが、同様の技術スタックを採用する際の参考になれば幸いです。
