@@ -21,7 +21,11 @@ const geistMono = Geist_Mono({
 async function getOrigin() {
   const headersList = await headers();
   const host = headersList.get("x-forwarded-host") || headersList.get("host");
-  const protocol = headersList.get("x-forwarded-proto") || "http";
+  const protocol =
+    (headersList.get("x-forwarded-proto") ??
+    headersList.get("via")?.includes("HTTP/2"))
+      ? "https"
+      : "http";
   return `${protocol}://${host}`;
 }
 
@@ -39,7 +43,7 @@ export default async function RootLayout({
     token &&
     (await jwtVerify<{ payload: { user?: typeof users.$inferSelect } }>(
       String(token),
-      new TextEncoder().encode(process.env.secret)
+      new TextEncoder().encode(process.env.secret),
     )
       .then(({ payload: { user } }) => user as typeof users.$inferSelect)
       .then(({ id, name }: typeof users.$inferSelect) => ({ id, name }))
