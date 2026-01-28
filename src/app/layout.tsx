@@ -21,12 +21,9 @@ const geistMono = Geist_Mono({
 async function getOrigin() {
   const headersList = await headers();
   const host = headersList.get("x-forwarded-host") || headersList.get("host");
-  const protocol =
-    headersList.get("x-forwarded-proto") ??
-    (headersList.get("via") ? "https" : "http");
-
-  const allHeaders = Object.fromEntries(headersList);
-  console.log("Received Headers:", allHeaders);
+  const protocol = headersList.get("via")?.includes("HTTP/2")
+    ? "https"
+    : (headersList.get("x-forwarded-proto") ?? "http");
   return `${protocol}://${host}`;
 }
 
