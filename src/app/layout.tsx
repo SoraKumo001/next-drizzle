@@ -24,6 +24,9 @@ async function getOrigin() {
   const protocol =
     headersList.get("x-forwarded-proto") ??
     (headersList.get("via") ? "https" : "http");
+
+  const allHeaders = Object.fromEntries(headersList);
+  console.log("Received Headers:", allHeaders);
   return `${protocol}://${host}`;
 }
 
