@@ -22,7 +22,7 @@ const AUTH_TOKEN_COOKIE = "auth-token";
 const INTROSPECTION_INTERVAL = 10000;
 
 // Sample query generation depth
-const QUERY_GENERATION_DEPTH = 1;
+const QUERY_GENERATION_DEPTH = 0;
 
 /**
  * Middleware to extract and verify JWT token from cookies
@@ -30,7 +30,7 @@ const QUERY_GENERATION_DEPTH = 1;
  */
 const authMiddleware = async (
   c: HonoContext<Context>,
-  next: () => Promise<void>
+  next: () => Promise<void>,
 ) => {
   const cookies = getCookie(c);
   const token = cookies[AUTH_TOKEN_COOKIE] ?? "";
@@ -41,7 +41,7 @@ const authMiddleware = async (
    */
   const user = await jwtVerify(token, new TextEncoder().encode(SECRET))
     .then(
-      (data) => data.payload.user as typeof relations.users.table.$inferSelect
+      (data) => data.payload.user as typeof relations.users.table.$inferSelect,
     )
     .catch(() => undefined);
   // Store user in request context
@@ -78,7 +78,7 @@ app.get("*", (c) => {
       endpointUrl: c.req.url,
       // Automatically refresh schema periodically
       introspectionInterval: INTROSPECTION_INTERVAL,
-    })
+    }),
   );
 });
 
